@@ -1,5 +1,8 @@
 package side_server;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public interface ClientHandler {
-	handleClient(InputStream,OutputStream);
+	void handleClient(InputStream in, OutputStream out);
 }

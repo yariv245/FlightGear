@@ -3,7 +3,7 @@ package side_server;
 public class MySerialServer implements Server {
 
 	@Override
-	public void open(int port) {
+	public void open(int port, ClientHandler ch) {
 		// TODO Auto-generated method stub
 
 	}
