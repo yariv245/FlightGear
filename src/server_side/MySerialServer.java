@@ -1,4 +1,4 @@
-package side_server;
+package server_side;
 
 public class MySerialServer implements Server {
 

@@ -1,4 +1,4 @@
-package side_server;
+package server_side;
 
 import java.io.InputStream;
 import java.io.OutputStream;
