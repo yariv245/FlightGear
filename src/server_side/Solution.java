@@ -1,5 +1,5 @@
 package server_side;
 
-public interface Solution {
+public class Solution {
 
 }
