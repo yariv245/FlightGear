@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 
 public class MyTestClientHandler implements ClientHandler {
 	Solver solver;
-	CacheManager cmó
+	CacheManager cm;
 
 	public MyTestClientHandler(CacheManager cm) {
 		this.cm = cm;
