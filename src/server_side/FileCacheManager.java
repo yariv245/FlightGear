@@ -3,19 +3,19 @@ package server_side;
 public class FileCacheManager implements CacheManager {
 
 	@Override
-	public boolean existSolution(Problem var1) {
+	public boolean existSolution(Object P) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Solution loadSolution(Problem var1) {
+	public Object loadSolution(Object P) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void store(Problem var1, Solution var2) {
+	public void store(Object P, Object S) {
 		// TODO Auto-generated method stub
 
 	}

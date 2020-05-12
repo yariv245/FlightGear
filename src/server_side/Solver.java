@@ -1,5 +1,5 @@
 package server_side;
 
-public interface Solver<Problem, Solution> {
-    Solution solve(Problem var1);
+public interface Solver<P,S> {
+	S solve(P var1);
 }
