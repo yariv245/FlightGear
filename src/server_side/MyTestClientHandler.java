@@ -9,36 +9,35 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 public class MyTestClientHandler implements ClientHandler {
-	Solver solver;
+	Solver<?, ?> solver;
 	CacheManager cm;
 
-	public MyTestClientHandler(CacheManager cm) {
+	public MyTestClientHandler(CacheManager cm, Solver<?, ?> solver) {
 		this.cm = cm;
+		this.solver = solver;
 	}
 
 	public void handleClient(InputStream inFromClient, OutputStream outToClient) {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(inFromClient));
 		PrintWriter outClient = new PrintWriter(outToClient);
-		
-		readInputsAndSend(userInput,outClient);
+
+		readInputsAndSend(userInput, outClient);
 	}
+
 	private void readInputsAndSend(BufferedReader in, PrintWriter out) {
 		try {
 			String line;
-			Solver solver= null;
-			Solution sol = null;
+			Solver<String, String> solver;
+			solver = (str) -> {
+				return new StringBuilder(str).reverse().toString();
+			};
 			while (!(line = in.readLine()).equals("end")) {
-				if(cm.existSolution(new Problem(line))) {
-					out.println(cm.loadSolution(new Problem(line)));
-					out.flush();
+				if (cm.existSolution(line)) {
+					out.println(cm.loadSolution(line));
+				} else {
+					out.println(solver.solve(line));
 				}
-				else {
-					sol = solver.solve(new Problem(line));
-					cm.store(new Problem(line), sol);
-					out.println(sol);
-					out.flush();
-				}
-				
+				out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
