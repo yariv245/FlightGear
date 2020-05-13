@@ -1,9 +1,9 @@
 package server;
 
-public interface CacheManager {
-    boolean existSolution(Object P);
+public interface CacheManager<P,S> {
+    boolean existSolution(P Problem);
 
-    Object loadSolution(Object P);
+    S loadSolution(P Problem);
 
-    void store(Object P, Object S);
+    void store(P Problem, S Solutin);
 }

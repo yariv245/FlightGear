@@ -11,12 +11,10 @@ public class MySerialServer implements Server {
 	
 	@Override
 	public void start(int port, ClientHandler ch) throws IOException {
-		// TODO Auto-generated method stub
 		new Thread(()->{
 			try {
 				open(port, ch);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}).start();
@@ -24,7 +22,6 @@ public class MySerialServer implements Server {
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
 		stop = true;
 	}
 	@Override
@@ -34,6 +31,8 @@ public class MySerialServer implements Server {
 		while (!stop) {
 			try {
 				Socket aClient = server.accept();
+				System.out.println("Client is conected");
+
 				try {
 					ch.handleClient(aClient.getInputStream(), aClient.getOutputStream());
 					aClient.getInputStream().close();

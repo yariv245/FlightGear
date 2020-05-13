@@ -10,11 +10,11 @@ import java.io.PrintWriter;
 
 public class MyTestClientHandler implements ClientHandler {
 	Solver<String, String> solver;
-	CacheManager cm;
+	CacheManager<String, String> cm;
 
-	public MyTestClientHandler(CacheManager cm, Solver<String, String> solver) {
-		this.cm = cm;
-		this.solver = solver;
+	public MyTestClientHandler() {
+		this.solver = (str)->new StringBuilder(str).reverse().toString();
+		this.cm = new FileCacheManager<String, String>();
 	}
 
 	public void handleClient(InputStream inFromClient, OutputStream outToClient) {
@@ -26,12 +26,14 @@ public class MyTestClientHandler implements ClientHandler {
 
 	private void readInputsAndSend(BufferedReader in, PrintWriter out) {
 		try {
-			String line;
+			String line,solution;
 			while (!(line = in.readLine()).equals("end")) {
 				if (cm.existSolution(line)) {
 					out.println(cm.loadSolution(line));
 				} else {
-					out.println(this.solver.solve(line));
+					solution = this.solver.solve(line);
+					cm.store(line, solution);
+					out.println(solution);
 				}
 				out.flush();
 			}
