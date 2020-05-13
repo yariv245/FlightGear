@@ -1,4 +1,4 @@
-package server_side;
+package server;
 
 public class FileCacheManager implements CacheManager {
 

@@ -1,4 +1,4 @@
-package server_side;
+package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,21 +8,18 @@ import java.net.SocketTimeoutException;
 public class MySerialServer implements Server {
 
 	private volatile boolean stop;
-
+	
 	@Override
-	public void open(int port, ClientHandler ch) throws IOException {
+	public void start(int port, ClientHandler ch) throws IOException {
 		// TODO Auto-generated method stub
-		ServerSocket server = new ServerSocket(port);
-		server.setSoTimeout(1000);
 		new Thread(()->{
 			try {
-				start(server, ch);
+				open(port, ch);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}).start();
-		server.close();
 	}
 
 	@Override
@@ -30,8 +27,10 @@ public class MySerialServer implements Server {
 		// TODO Auto-generated method stub
 		stop = true;
 	}
-
-	public void start(ServerSocket server, ClientHandler ch) throws IOException {
+	@Override
+	public void open(int port, ClientHandler ch) throws IOException {
+		ServerSocket server = new ServerSocket(port);
+		server.setSoTimeout(1000);
 		while (!stop) {
 			try {
 				Socket aClient = server.accept();
@@ -45,6 +44,7 @@ public class MySerialServer implements Server {
 			} catch (SocketTimeoutException e) {
 				/* ... */}
 		}
+		server.close();
 
 	}
 
