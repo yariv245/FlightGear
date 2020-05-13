@@ -27,10 +27,6 @@ public class MyTestClientHandler implements ClientHandler {
 	private void readInputsAndSend(BufferedReader in, PrintWriter out) {
 		try {
 			String line;
-//			Solver<String, String> solver;
-//			this.solver = (str) -> {
-//				return new StringBuilder(str).reverse().toString();
-//			};
 			while (!(line = in.readLine()).equals("end")) {
 				if (cm.existSolution(line)) {
 					out.println(cm.loadSolution(line));
