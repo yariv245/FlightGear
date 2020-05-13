@@ -1,4 +1,4 @@
-package server_side;
+package server;
 
 public interface Solver<P,S> {
 	S solve(P var1);
