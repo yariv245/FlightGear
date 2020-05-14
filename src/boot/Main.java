@@ -1,6 +1,7 @@
 package boot;
 
 import java.io.IOException;
+import java.util.Random;
 
 import server.ClientHandler;
 import server.MySerialServer;
@@ -21,5 +22,4 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
 }
