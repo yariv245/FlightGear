@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class MyClientHandler implements ClientHandler {
-	SearcherSolver<Searchable<String>, Solutionit<String>> solver;
+	SearcherSolver<Searchable<String>, Solution<String>> solver;
 	CacheManager<ArrayList<String>, String> cm;W
 
 	public MyClientHandler() {

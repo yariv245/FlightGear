@@ -9,5 +9,4 @@ public interface Searchable<Param> {
 	boolean isGoalState(State<Param> state);
 
 	List<State<Param>> getAllPossibleStates(State<Param> state);
-
 }

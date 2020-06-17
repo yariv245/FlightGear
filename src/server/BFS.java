@@ -1,28 +1,26 @@
 package server;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.PriorityQueue;
 
-public class BFS<T> extends CommonSearcher<T> {
+public class BFS<Problem> extends CommonSearcher<Problem> {
 
 	@Override
-	public Solution search(Searchable<T> s) {
+	public 	Solution<Problem> search(Searchable<Problem> s){
 		openList.add(s.getInitialState());
-		HashSet<State<T>> closedSet = new HashSet<State<T>>();
+		HashSet<State<Problem>> closedSet = new HashSet<State<Problem>>();
 
 		while (openList.size() > 0) {
-			State<T> n = popOpenList();// dequeue
+			State<Problem> n = popOpenList();// dequeue
 			closedSet.add(n);
 			if (s.isGoalState(n)) {
 				return backTrace(n);
 				// private method, back traces through the parents
 			}
 
-			ArrayList<State<T>> successors = (ArrayList<State<T>>) s.getAllPossibleStates(n);
+			ArrayList<State<Problem>> successors = (ArrayList<State<Problem>>) s.getAllPossibleStates(n);
 
-			for (State<T> state : successors) {
+			for (State<Problem> state : successors) {
 				if (!closedSet.contains(state) && !openList.contains(state)) {
 					state.setCameFrom(n);
 					state.setTotalCost(state.getCost() + n.getTotalCost());
@@ -33,7 +31,7 @@ public class BFS<T> extends CommonSearcher<T> {
 					if (!openList.contains(state)) {
 						openList.add(state);
 					} else {// Update priority queue
-						State<T> x = popOpenList();
+						State<Problem> x = popOpenList();
 						openList.add(x);
 					}
 				}

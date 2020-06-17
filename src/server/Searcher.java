@@ -1,5 +1,6 @@
 package server;
 
-public interface Searcher<T> {
-	Solution<?> search(Searchable<T> P);
+public interface Searcher<Problem> {
+	Solution<Problem> search(Searchable<Problem> problem);
+
 }

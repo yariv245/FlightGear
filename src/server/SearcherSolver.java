@@ -1,6 +1,6 @@
 package server;
 
-public class SearcherSolver<P extends Searchable<P>, Sol extends Solutionit<Sol>> implements Solver<P, Sol> {
+public class SearcherSolver<P, S> implements Solver<P, S> {
 
 	Searcher<P> searcher;
 
@@ -9,8 +9,8 @@ public class SearcherSolver<P extends Searchable<P>, Sol extends Solutionit<Sol>
 	}
 
 	@Override
-	public Sol solve(P var1) {
-		return (Sol) this.searcher.search(var1);
+	public S solve(P var1) {
+		return this.searcher.search(var1);
 	}
 
 }
