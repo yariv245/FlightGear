@@ -6,13 +6,13 @@ import java.util.Random;
 
 public class MatProblem implements Searchable<String> {
 
-	//State<String>[][] board;
+	State<String>[][] board;
 	State<String> startposition;
 	State<String> goalposition;
 
 	// T[][] arrays = (T[][])new Object[chunks][];
 	public MatProblem(/* State<String>[][] p, */State<String> startposition, State<String> goalposition) {
-		State<String>[][] board = (State<String>[][]) new State[10][];
+		this.board = (State<String>[][]) new State[10][10];
 		Random random = new Random();
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
