@@ -2,8 +2,13 @@ package server;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.PriorityQueue;
 
 public class BFS<Problem> extends CommonSearcher<Problem> {
+		
+	public BFS() {
+		super.openList = new PriorityQueue<State<Problem>>();
+	}
 
 	@Override
 	public Solution search(Searchable<Problem> s) {
@@ -14,7 +19,7 @@ public class BFS<Problem> extends CommonSearcher<Problem> {
 			State<Problem> n = popOpenList();// dequeue
 			closedSet.add(n);
 			if (s.isGoalState(n)) {
-				return backTrace(n);
+				return backtrace(n);
 				// private method, back traces through the parents
 			}
 

@@ -1,25 +1,20 @@
 package server;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Stack;
 
 public class MatSolution<T> implements Solution<T> {
 	
-	Stack<State<T>> states;
+	Stack<T> states;
 	
-	public MatSolution(Stack<State<T>> stack){
+	public MatSolution(Stack<T> stack){
 		this.states=stack;
 	}
 
-	public Stack<State<T>> getStates() {
+	public Stack<T> getStates() {
 		return states;
 	}
 	
-	<E> Collection<E> getSolution(){
-		
-		
-		return null;
+	public void store(T ele) {
+		this.states.add(ele);
 	}
-
 }

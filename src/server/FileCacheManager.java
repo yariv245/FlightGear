@@ -16,6 +16,11 @@ public class FileCacheManager<P, S> implements CacheManager<P, S> {
 
 	public FileCacheManager() {
 		this.data = new LinkedHashMap<P, S>() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -4495459385327939802L;
+
 			protected boolean removeEldestEntry(Map.Entry<P, S> eldest) { 	// Set the limit of Objects in LinkedHashMap
 				return size() > limit; 										// if the size > limit, will remove the eldest object
 			}
