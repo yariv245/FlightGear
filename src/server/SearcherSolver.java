@@ -1,5 +1,5 @@
 package server;
-
+//
 public class SearcherSolver implements Solver<Searchable,Solution> {
 
 	Searcher<Searchable> searcher;

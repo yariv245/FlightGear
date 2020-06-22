@@ -2,7 +2,7 @@ package server;
 
 import java.io.Serializable;
 import java.util.Stack;
-
+//
 public class MatSolution<T> implements Solution<T> {
 	
 	Stack<T> states;

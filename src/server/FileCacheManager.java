@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+//
 public class FileCacheManager<P, S> implements CacheManager<P, S> {
 	LinkedHashMap<P, S> data;
 	private int limit = 10;

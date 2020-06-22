@@ -2,7 +2,7 @@ package server;
 
 import java.io.Serializable;
 import java.util.Arrays;
-
+//
 public class State<T> implements Serializable  {
 
 	private static final long serialVersionUID = -6724097601673807555L;

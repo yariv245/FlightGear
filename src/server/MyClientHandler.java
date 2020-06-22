@@ -11,13 +11,12 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Stack;
-
+//
 public class MyClientHandler implements ClientHandler {
 	SearcherSolver solver;
 	CacheManager<Searchable<String>, Solution<State<String>>> cm;
 
 	public MyClientHandler() {
-//		mat = new MatProblem();
 		this.solver = new SearcherSolver(new BFS<>());
 		this.cm = new FileCacheManager<Searchable<String>, Solution<State<String>>>();
 	}

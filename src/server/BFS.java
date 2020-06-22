@@ -20,7 +20,7 @@ public class BFS<Problem> extends CommonSearcher<Problem> {
 			closedSet.add(n);
 			if (s.isGoalState(n)) {
 				return backtrace(n);
-				// private method, back traces through the parents
+				// private method, back traces through the parent
 			}
 
 			ArrayList<State<Problem>> successors =new ArrayList<>();
