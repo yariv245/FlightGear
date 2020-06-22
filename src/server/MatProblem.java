@@ -11,47 +11,56 @@ public class MatProblem implements Searchable<String> {
 	State<String> goalposition;
 
 	// T[][] arrays = (T[][])new Object[chunks][];
-	public MatProblem(/* State<String>[][] p, */State<String> startposition, State<String> goalposition) {
-		this.board = (State<String>[][]) new State[10][10];
-		Random random = new Random();
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; j++) {
-				board[i][j] = new State<String>(String.valueOf(random.nextInt(1)), i, j, random.nextInt(10));
-			}
-		}
+	public MatProblem(State<String>[][] board, State<String> startposition, State<String> goalposition) {
+//		this.board = (State<String>[][]) new State[3][3];
+//		Random random = new Random();
+//		for (int i = 0; i < 3; i++) {
+//			for (int j = 0; j < 3; j++) {
+//				board[i][j] = new State<String>(String.valueOf(random.nextInt(1)), i, j, random.nextInt(10));
+//			}
+//		}
 		this.startposition = startposition;
 		this.goalposition = goalposition;
+		this.board = board;
 	}
 
 	@Override
 	public State<String> getInitialState() {
-		// TODO Auto-generated method stub
 		return this.startposition;
 	}
 
 	@Override
 	public boolean isGoalState(State<String> s) {
-		// TODO Auto-generated method stub
 		return goalposition.equals(s);
 	}
 
 	@Override
 	public Collection<State<String>> getAllPossibleStates(State<String> s) {
-		ArrayList<State<String>> lst = new ArrayList<State<String>>();
+		ArrayList<State<String>> neighbors = new ArrayList<State<String>>();
 
-		if (s.getRow() != 0)
-			lst.add(board[s.getRow()][s.getCol() - 1]);
+		int i = s.getRow();
+		int j = s.getCol();
+		int x = this.board.length;
+		int y = this.board[0].length;
+		if (isCabin(i, j, x, y)) {
+			if (isCabin(i + 1, j, x, y))
+				neighbors.add(board[i + 1][j]);
+			if (isCabin(i - 1, j, x, y))
+				neighbors.add(board[i - 1][j]);
+			if (isCabin(i, j + 1, x, y))
+				neighbors.add(board[i][j + 1]);
+			if (isCabin(i, j - 1, x, y))
+				neighbors.add(board[i][j - 1]);
+		}
+		return neighbors;
+	}
 
-		if (s.getRow() != this.board.length - 1)
-			lst.add(board[s.getRow()][s.getCol() + 1]);
-
-		if (s.getCol() != 0)
-			lst.add(board[s.getRow() - 1][s.getCol()]);
-
-		if (s.getCol() != this.board[0].length)
-			lst.add(board[s.getRow() + 1][s.getCol()]);
-
-		return lst;
+	public static boolean isCabin(int i, int j, int x, int y) {
+		boolean flag = false;
+		if (i >= 0 && i < x && j >= 0 && j < y) {
+			flag = true;
+		}
+		return flag;
 	}
 
 }

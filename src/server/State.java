@@ -1,6 +1,11 @@
 package server;
 
-public class State<T> {
+import java.io.Serializable;
+import java.util.Arrays;
+
+public class State<T> implements Serializable  {
+
+	private static final long serialVersionUID = -6724097601673807555L;
 	private T m_state; // the state represented by a string
 	private double cost; // cost to reach this state
 	private State<T> cameFrom; // the state we came from to this state
@@ -15,6 +20,13 @@ public class State<T> {
 	public void setTotalCost(double totalCost) {
 		this.totalCost = totalCost;
 	}
+	public State() { // CTOR
+		this.row = 0;
+		this.col = 0;
+		this.totalCost = 0;
+		this.cost = 0;
+		this.m_state = null;
+	}
 
 	public State(T state, int row, int col, int cost) { // CTOR
 		this.m_state = state;
@@ -25,11 +37,11 @@ public class State<T> {
 	}
 
 	public boolean equals(State<T> goal) { // it’s easier to simply overload
-		return m_state.equals(goal.m_state) && row==goal.getRow() && col == goal.getCol(); // ..
+		return /*m_state.equals(goal.m_state) &&*/ row==goal.getRow() && col == goal.getCol(); // ..
 	}
 
-	public T getState() {
-		return m_state;
+	public State<T> getState() {
+		return this;
 	}
 
 	public void setState(T state) {
@@ -67,4 +79,6 @@ public class State<T> {
 	public void setCol(int col) {
 		this.col = col;
 	}
+	
+
 }

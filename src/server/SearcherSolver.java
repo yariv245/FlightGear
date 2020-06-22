@@ -10,7 +10,6 @@ public class SearcherSolver implements Solver<Searchable,Solution> {
 
 	@Override
 	public Solution solve(Searchable var1) {
-		// TODO Auto-generated method stub
 		return this.searcher.search(var1);
 	}
 }

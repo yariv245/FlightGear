@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 public class BFS<Problem> extends CommonSearcher<Problem> {
 		
 	public BFS() {
-		super.openList = new PriorityQueue<State<Problem>>();
+		super();
 	}
 
 	@Override
