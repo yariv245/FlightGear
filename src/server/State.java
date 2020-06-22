@@ -36,7 +36,7 @@ public class State<T> implements Serializable  {
 		this.cost = cost;
 	}
 
-	public boolean equals(State<T> goal) { // it’s easier to simply overload
+	public boolean equals(State<T> goal) { // itï¿½s easier to simply overload
 		return /*m_state.equals(goal.m_state) &&*/ row==goal.getRow() && col == goal.getCol(); // ..
 	}
 
