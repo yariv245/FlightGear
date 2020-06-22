@@ -1,5 +1,5 @@
 package server;
-
+//
 public interface CacheManager<P,S> {
     boolean existSolution(P Problem);
 

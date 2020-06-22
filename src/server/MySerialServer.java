@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-
+//
 public class MySerialServer implements Server {
 
 	private volatile boolean stop;
