@@ -10,15 +10,7 @@ public class MatProblem implements Searchable<String> {
 	State<String> startposition;
 	State<String> goalposition;
 
-	// T[][] arrays = (T[][])new Object[chunks][];
 	public MatProblem(State<String>[][] board, State<String> startposition, State<String> goalposition) {
-//		this.board = (State<String>[][]) new State[3][3];
-//		Random random = new Random();
-//		for (int i = 0; i < 3; i++) {
-//			for (int j = 0; j < 3; j++) {
-//				board[i][j] = new State<String>(String.valueOf(random.nextInt(1)), i, j, random.nextInt(10));
-//			}
-//		}
 		this.startposition = startposition;
 		this.goalposition = goalposition;
 		this.board = board;
