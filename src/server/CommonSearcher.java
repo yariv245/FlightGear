@@ -1,11 +1,10 @@
 package server;
 
 import java.util.PriorityQueue;
-import java.util.Stack;
 import java.util.Comparator; 
   //
-class The_Comparator implements Comparator<State> { 
-    public int compare(State s1, State s2) 
+class The_Comparator implements Comparator<State<?>> { 
+    public int compare(State<?> s1, State<?> s2) 
     { 
         return s1.getTotalCost() < s2.getTotalCost() ? -1:1;
     } 
@@ -17,8 +16,8 @@ public abstract class CommonSearcher<T> implements Searcher<T> {
 	private int evaluatedNodes;
 
 	public CommonSearcher() {
-		openList = new PriorityQueue<State<T>>(new The_Comparator());
-		evaluatedNodes = 0;
+		this.openList = new PriorityQueue<State<T>>(new The_Comparator());
+		this.evaluatedNodes = 0;
 	}
 	
 	public Solution<State<T>> backtrace(State<T> goal) {

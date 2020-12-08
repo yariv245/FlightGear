@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Stack;
+
 //
 public class MyClientHandler implements ClientHandler {
 	SearcherSolver solver;
@@ -23,9 +24,9 @@ public class MyClientHandler implements ClientHandler {
 		BufferedReader userInput = new BufferedReader(new InputStreamReader(inFromClient));
 		PrintWriter outClient = new PrintWriter(outToClient);
 		ArrayList<String> string_matrix = new ArrayList<String>();
-		State<String> start;
-		State<String> goal;
-		State<String>[][] board;
+		State<String> start = new State<String>();
+		State<String> goal = new State<String>();
+		ArrayList<ArrayList<State<String>>> board = new ArrayList<ArrayList<State<String>>>();
 		MatProblem mat;
 		String[] postions = new String[2];
 		Solution<State<String>> solution = new MatSolution<State<String>>();
@@ -37,40 +38,48 @@ public class MyClientHandler implements ClientHandler {
 			board = convert_to_matrix(string_matrix); // Convert string_matrix to state<String> matrix
 			line = userInput.readLine();
 			postions = line.split(",");
-			start = board[Integer.parseInt(postions[0])][Integer.parseInt(postions[1])]; //Set start position
+			start = board.get(Integer.parseInt(postions[0])).get(Integer.parseInt(postions[1])); // Set start position
 			start.setTotalCost(start.getCost());
 			line = userInput.readLine();
 			postions = line.split(",");
-			goal = board[Integer.parseInt(postions[0])][Integer.parseInt(postions[1])]; //Set goal position
+			goal = board.get(Integer.parseInt(postions[0])).get(Integer.parseInt(postions[1])); // Set goal position
 			mat = new MatProblem(board, start, goal);
-			
+
 			if (cm.existSolution(mat)) {
 				outClient.println(cm.loadSolution(mat));
 			} else {
+				solution.getStates().clear();
 				solution = this.solver.solve(mat);
 				cm.store(mat, solution);
-				
-				Stack<State<String>> stack = solution.getStates();
-				State<String> from = stack.pop();
-				State<String> to = stack.pop();
+
+				Stack<State<String>> stack = new Stack<State<String>>();
+				State<String> from = new State<String>();
+				State<String> to = new State<String>();
+				stack = solution.getStates();
+				from = stack.pop();
+				to = stack.pop();
+				System.out.println("from: " + from.getM_state() + " to: " + to.getM_state());
 				String path = direction(from, to);
 				while (!stack.isEmpty()) {
 					from = to;
 					to = stack.pop();
 					path = path + "," + direction(from, to);
+					System.out.println("from: " + from.getM_state() + " to: " + to.getM_state());
 				}
 				outClient.println(path);
+				stack.clear();
 			}
+
 			outClient.flush();
 		} catch (
 
 		IOException e) {
 			e.printStackTrace();
-		}	
+		}
 
 	}
 
-	public String direction(State to, State from) {
+	public String direction(State<String> to, State<String> from) {
 		if (from.getCol() > to.getCol())
 			return "Right";
 		else if (from.getRow() > to.getRow())
@@ -83,12 +92,13 @@ public class MyClientHandler implements ClientHandler {
 		return null;
 	}
 
-	private State<String>[][] convert_to_matrix(ArrayList<String> string_matrix) {
-		State<String>[][] matrix = (State<String>[][]) new State[string_matrix.size()][string_matrix.size()];
+	private ArrayList<ArrayList<State<String>>> convert_to_matrix(ArrayList<String> string_matrix) {
+		ArrayList<ArrayList<State<String>>> matrix = new ArrayList<ArrayList<State<String>>>();
 		int j = 0;
 		for (int i = 0; i < string_matrix.size(); i++) {
+			matrix.add(new ArrayList<State<String>>());
 			for (String s : string_matrix.get(i).split(",")) {
-				matrix[i][j] = new State<String>(s, i, j, Integer.parseInt(s));
+				matrix.get(i).add(new State<String>(s, i, j, Integer.parseInt(s)));
 				j++;
 			}
 			j = 0;

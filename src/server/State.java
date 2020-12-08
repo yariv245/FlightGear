@@ -1,8 +1,7 @@
 package server;
 
 import java.io.Serializable;
-import java.util.Arrays;
-//
+
 public class State<T> implements Serializable  {
 
 	private static final long serialVersionUID = -6724097601673807555L;
@@ -37,15 +36,11 @@ public class State<T> implements Serializable  {
 	}
 
 	public boolean equals(State<T> goal) { // it�s easier to simply overload
-		return /*m_state.equals(goal.m_state) &&*/ row==goal.getRow() && col == goal.getCol(); // ..
+		return row==goal.getRow() && col == goal.getCol(); // ..
 	}
 
 	public State<T> getState() {
 		return this;
-	}
-
-	public void setState(T state) {
-		this.m_state = state;
 	}
 
 	public double getCost() {
@@ -78,5 +73,13 @@ public class State<T> implements Serializable  {
 
 	public void setCol(int col) {
 		this.col = col;
+	}
+
+	public T getM_state() {
+		return m_state;
+	}
+
+	public void setM_state(T m_state) {
+		this.m_state = m_state;
 	}
 }
