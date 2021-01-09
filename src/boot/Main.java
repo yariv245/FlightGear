@@ -1,28 +1,32 @@
 package boot;
 
-import java.io.IOException;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import view.SimulatorController;
+import viewModel.ViewModelSimulator;
 
-import server.ClientHandler;
-import server.MyClientHandler;
-import server.MySerialServer;
-import server.Server;
+public class Main extends Application {
 
-public class Main {
+    @Override
+    public void start(Stage primaryStage) throws Exception{
 
-	public static void main(String[] args) {
-		// int port = Integer.parseInt(args[0]);
-//		int port = 6400;
-//		Server s = new MySerialServer();
-//		ClientHandler testch = new MyClientHandler();
-//		try {
-//			s.start(port, testch);
-//		} catch (NumberFormatException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		TestServer client = new TestServer();
-//		client.runClient(6400);
-		
-	}
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/simulator.fxml"));
+        Parent root = loader.load();
+        primaryStage.setTitle("Flight simulator gear");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+
+        ViewModelSimulator viewModelSimulator =new ViewModelSimulator();
+        SimulatorController simulatorController = loader.getController();
+        simulatorController.setSimulatorController(viewModelSimulator);
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
+
