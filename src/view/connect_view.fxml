@@ -35,7 +35,7 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Button fx:id="connectBtn" mnemonicParsing="false" text="Connect" onAction="#client_connect"/>
+                <Button fx:id="connectBtn" mnemonicParsing="false" text="Connect"/>
             </children>
         </HBox>
     </children>

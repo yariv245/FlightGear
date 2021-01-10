@@ -22,36 +22,29 @@ import java.util.*;
 public class ViewModelSimulator {
 
     //functions and data
-    public StringProperty ip;
-    public StringProperty port;
+    public StringProperty client_ip;
+    public StringProperty client_port;
 
+    public StringProperty server_ip;
+    public StringProperty server_port;
     public ViewModelSimulator(){
-        ip = new SimpleStringProperty();
-        port = new SimpleStringProperty();
-    }
-
-    public void open_window() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("./view/connect_view.fxml"));
-        Parent root = loader.load();
-        Stage primaryStage = new Stage();
-        primaryStage.setTitle("Connect server");
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
-
-        ViewModelConnect viewModelConnect = new ViewModelConnect();
-        ConnectController connectController = loader.getController();
-        connectController.setConnectController(viewModelConnect);
+        client_ip = new SimpleStringProperty();
+        client_port = new SimpleStringProperty();
+        server_ip = new SimpleStringProperty();
+        server_port = new SimpleStringProperty();
     }
 
     public void client_connect() throws IOException {
         //do the actual connection by connect command
-        ConnectCommand connectCommand = new ConnectCommand();
-        ArrayList<String> data = new ArrayList<>();
-        data.add(ip.getValue());//ip
-        data.add(port.getValue());//port
-        connectCommand.doCommand(data);
+//        ConnectCommand connectCommand = new ConnectCommand();
+//        ArrayList<String> data = new ArrayList<>();
+//        data.add(ip.getValue());//ip
+//        data.add(port.getValue());//port
+//        connectCommand.doCommand(data);
+        System.out.println("Try to connect");
     }
     public void calc_path() throws IOException {
+        System.out.println("Try to server  connect");
     }
 
     public void load_data(MapDisplayer mapDisplayer) throws IOException {
