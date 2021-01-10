@@ -1,6 +1,7 @@
 package server;
+
 //
-public interface CacheManager<P,S> {
+public interface CacheManager<P, S> {
     boolean existSolution(P Problem);
 
     S loadSolution(P Problem);

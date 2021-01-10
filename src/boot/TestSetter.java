@@ -10,9 +10,9 @@ import server.Server;
 
 public class TestSetter {
 
-	static Server s;
+    static Server s;
 
-	public static void runServer(int port) {
+    public static void runServer(int port) {
 //		// put the code here that runs your server
 //		// for example:
 //		s=new MySerialServer(); 
@@ -28,6 +28,6 @@ public class TestSetter {
 //		// put the code here that stops your server
 //		// for example:
 //		s.stop();
-	}
+    }
 
 }

@@ -23,13 +23,23 @@ public class SimulatorController {
     Circle joystick;
     @FXML
     Circle outer_bounds;
-    double maxRadius = 80 ;
+    double maxRadius = 80;
 
     @FXML
     public void initialize() {
         joystick.setOnMouseDragged(mouseEvent -> {
-            joystick.setLayoutX(mouseEvent.getSceneX());
-            joystick.setLayoutY(mouseEvent.getSceneY());
+            Point2D centerPoint = new Point2D(651, 196);
+            Point2D mouse = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+            double dis = centerPoint.distance(mouse);
+            if (dis > maxRadius) { // if joystick get out of bounds
+                double angle = Math.atan2(mouse.getY() - centerPoint.getY(), mouse.getX() - centerPoint.getX()); // cal angle between 2 points
+                // force joystick to stay on his bounds
+                joystick.setLayoutX(centerPoint.getX() + maxRadius * Math.cos(angle));
+                joystick.setLayoutY(centerPoint.getY() + maxRadius * Math.sin(angle));
+            } else { // in bounds
+                joystick.setLayoutX(mouseEvent.getSceneX());
+                joystick.setLayoutY(mouseEvent.getSceneY());
+            }
         });
         joystick.setOnMouseReleased(mouseDragEvent -> {
             joystick.setLayoutX(651);
@@ -40,19 +50,26 @@ public class SimulatorController {
 //            System.out.println("out of circle bounds");
 //        });
 
-        joystick.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>(){
-
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                Point2D centerPoint = new Point2D(651,196);
-
-                double dis = centerPoint.distance(mouseEvent.getSceneX(),mouseEvent.getSceneY());
-                if(dis >maxRadius){
-//                    joystick.setLayoutX();
-//                    joystick.setLayoutY();
-                }
-            }
-        });
+//        joystick.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+//
+//            @Override
+//            public void handle(MouseEvent mouseEvent) {
+//                joystick.setLayoutX(651);
+//                joystick.setLayoutY(196);
+//                Point2D centerPoint = new Point2D(651, 196);
+//                Point2D mouse = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+//                double dis = centerPoint.distance(mouse);
+//                if (dis > maxRadius) {
+//                    double angle = centerPoint.angle(mouse);
+//                    System.out.println("angle: " + angle);
+//                    joystick.setLayoutX(mouse.getX() + maxRadius * Math.cos(Math.toDegrees(angle)));
+//                    joystick.setLayoutY(mouseEvent.getSceneY() + maxRadius * Math.sin(Math.toDegrees(angle)));
+//
+////                    joystick.setLayoutX();
+////                    joystick.setLayoutY();
+//                }
+//            }
+//        });
 
     }
 

@@ -14,12 +14,12 @@ public class ViewModelConnect {
     public StringProperty port;
 
 
-    public ViewModelConnect(){
-        ip= new SimpleStringProperty();
+    public ViewModelConnect() {
+        ip = new SimpleStringProperty();
         port = new SimpleStringProperty();
     }
 
-    public void connect_server(){
+    public void connect_server() {
         //do the actual connection by connect command
         ConnectCommand connectCommand = new ConnectCommand();
         ArrayList<String> data = new ArrayList<>();

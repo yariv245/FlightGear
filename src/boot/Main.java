@@ -12,7 +12,7 @@ public class Main extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/simulator.fxml"));
         Parent root = loader.load();
@@ -20,7 +20,7 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        ViewModelSimulator viewModelSimulator =new ViewModelSimulator();
+        ViewModelSimulator viewModelSimulator = new ViewModelSimulator();
         SimulatorController simulatorController = loader.getController();
         simulatorController.setViewModelSimulator(viewModelSimulator);
 

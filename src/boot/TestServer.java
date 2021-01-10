@@ -9,9 +9,9 @@ import java.net.SocketTimeoutException;
 import java.util.Random;
 
 public class TestServer {
-	
-	
-	public static void runClient(int port){
+
+
+    public static void runClient(int port) {
 //		Socket s=null;
 //		PrintWriter out=null;
 //		BufferedReader in=null;
@@ -81,7 +81,7 @@ public class TestServer {
 //				System.out.println("\tYour Server ran into some IOException (-20)");
 //			}
 //		}
-		
-	}
+
+    }
 
 }

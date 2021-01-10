@@ -49,7 +49,7 @@ public class MapDisplayer extends Canvas {
         //Filling the values by the CSV File values
         for (int i = 0; i < mapData.length; i++)
             for (int j = 0; j < mapData[i].length; j++) {
-                mapData[i][j] = (int)((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
+                mapData[i][j] = (int) ((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
             }
 
         reDraw();

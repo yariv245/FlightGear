@@ -41,23 +41,23 @@ public class ViewModelSimulator {
         if (file != null)
             pathFile = file.getPath();
 
-        try (CSVReader reader = new CSVReader(new FileReader(pathFile))){
+        try (CSVReader reader = new CSVReader(new FileReader(pathFile))) {
             r = reader.readAll();
             r.forEach(x -> System.out.println(Arrays.toString(x)));
         } catch (CsvException e) {
             e.printStackTrace();
         }
 
-        int[][] csvAsInt = new int[r.size()-2][];
+        int[][] csvAsInt = new int[r.size() - 2][];
 
-        for(int i=2;i<r.size();i++) {
-            csvAsInt[i-2] = new int[r.get(i).length];
+        for (int i = 2; i < r.size(); i++) {
+            csvAsInt[i - 2] = new int[r.get(i).length];
 
             for (int j = 0; j < r.get(i).length; j++)
-                csvAsInt[i-2][j] = Integer.parseInt(r.get(i)[j]);
+                csvAsInt[i - 2][j] = Integer.parseInt(r.get(i)[j]);
         }
 
-        for(int i=0;i< csvAsInt.length;i++)
+        for (int i = 0; i < csvAsInt.length; i++)
             Collections.reverse(Arrays.asList(csvAsInt[i]));
 
         mapDisplayer.setMapData(csvAsInt);

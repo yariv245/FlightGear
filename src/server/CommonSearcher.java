@@ -1,45 +1,45 @@
 package server;
 
 import java.util.PriorityQueue;
-import java.util.Comparator; 
-  //
-class The_Comparator implements Comparator<State<?>> { 
-    public int compare(State<?> s1, State<?> s2) 
-    { 
-        return s1.getTotalCost() < s2.getTotalCost() ? -1:1;
-    } 
-} 
+import java.util.Comparator;
+
+//
+class The_Comparator implements Comparator<State<?>> {
+    public int compare(State<?> s1, State<?> s2) {
+        return s1.getTotalCost() < s2.getTotalCost() ? -1 : 1;
+    }
+}
 
 public abstract class CommonSearcher<T> implements Searcher<T> {
 
-	protected PriorityQueue<State<T>> openList;
-	private int evaluatedNodes;
+    protected PriorityQueue<State<T>> openList;
+    private int evaluatedNodes;
 
-	public CommonSearcher() {
-		this.openList = new PriorityQueue<State<T>>(new The_Comparator());
-		this.evaluatedNodes = 0;
-	}
-	
-	public Solution<State<T>> backtrace(State<T> goal) {
-		MatSolution<State<T>> s = new MatSolution<State<T>>();
-		s.store(goal.getState());
-		while(goal.getCameFrom() != null) {
-			s.store(goal.getCameFrom().getState());
-			goal=goal.getCameFrom();
-		}
-		return s;
-	}
+    public CommonSearcher() {
+        this.openList = new PriorityQueue<State<T>>(new The_Comparator());
+        this.evaluatedNodes = 0;
+    }
 
-	final protected State<T> popOpenList() {
-		evaluatedNodes++;
-		return openList.poll();
-	}
+    public Solution<State<T>> backtrace(State<T> goal) {
+        MatSolution<State<T>> s = new MatSolution<State<T>>();
+        s.store(goal.getState());
+        while (goal.getCameFrom() != null) {
+            s.store(goal.getCameFrom().getState());
+            goal = goal.getCameFrom();
+        }
+        return s;
+    }
 
-	@Override
-	public int getNumberOfNodesEvaluated() {
-		return evaluatedNodes;
-	}
+    final protected State<T> popOpenList() {
+        evaluatedNodes++;
+        return openList.poll();
+    }
 
-	@Override
-	public abstract Solution<T> search(Searchable<T> s);
+    @Override
+    public int getNumberOfNodesEvaluated() {
+        return evaluatedNodes;
+    }
+
+    @Override
+    public abstract Solution<T> search(Searchable<T> s);
 }

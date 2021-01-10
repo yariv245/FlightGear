@@ -16,13 +16,13 @@ public class ConnectController {
     @FXML
     TextField port_textField;
 
-    public void setConnectController(ViewModelConnect vm){
-        this.viewModel= vm;
+    public void setConnectController(ViewModelConnect vm) {
+        this.viewModel = vm;
         viewModel.ip.bind(IP_textField.textProperty());
         viewModel.port.bind(port_textField.textProperty());
     }
 
-    public void connect_server(){
+    public void connect_server() {
         viewModel.connect_server();
     }
 
