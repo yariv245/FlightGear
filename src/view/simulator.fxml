@@ -17,9 +17,9 @@
     <children>
         <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="59.0" prefWidth="266.0" spacing="15.0">
             <children>
-                <Button fx:id="connect_btn" mnemonicParsing="false" text="Connect" onAction="#open_window"/>
+                <Button fx:id="connect_btn" mnemonicParsing="false" text="Connect" onAction="#client_connect"/>
                 <Button fx:id="loadData_btn" mnemonicParsing="false" text="Load Data" onAction="#load_data"/>
-                <Button fx:id="calcPath_btn" mnemonicParsing="false" text="Calculate Path"/>
+                <Button fx:id="calcPath_btn" mnemonicParsing="false" text="Calculate Path" onAction="#calc_path"/>
             </children>
         </HBox>
         <RadioButton fx:id="manual_radio_btn" layoutX="621.0" layoutY="30.0" mnemonicParsing="false" text="Manual"/>

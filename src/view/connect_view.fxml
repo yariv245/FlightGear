@@ -10,8 +10,7 @@
 <?import javafx.geometry.Insets?>
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="view.ConnectController">
+      spacing="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <HBox alignment="CENTER" style="-fx-background-color: #e1c1c1;">
             <children>
@@ -36,7 +35,7 @@
         </HBox>
         <HBox alignment="CENTER">
             <children>
-                <Button fx:id="connectBtn" mnemonicParsing="false" text="Connect" onAction="#connect_server"/>
+                <Button fx:id="connectBtn" mnemonicParsing="false" text="Connect" onAction="#client_connect"/>
             </children>
         </HBox>
     </children>

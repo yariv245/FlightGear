@@ -2,7 +2,10 @@ package viewModel;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import commands.ConnectCommand;
 import javafx.application.HostServices;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
@@ -19,6 +22,13 @@ import java.util.*;
 public class ViewModelSimulator {
 
     //functions and data
+    public StringProperty ip;
+    public StringProperty port;
+
+    public ViewModelSimulator(){
+        ip = new SimpleStringProperty();
+        port = new SimpleStringProperty();
+    }
 
     public void open_window() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("./view/connect_view.fxml"));
@@ -31,6 +41,17 @@ public class ViewModelSimulator {
         ViewModelConnect viewModelConnect = new ViewModelConnect();
         ConnectController connectController = loader.getController();
         connectController.setConnectController(viewModelConnect);
+    }
+
+    public void client_connect() throws IOException {
+        //do the actual connection by connect command
+        ConnectCommand connectCommand = new ConnectCommand();
+        ArrayList<String> data = new ArrayList<>();
+        data.add(ip.getValue());//ip
+        data.add(port.getValue());//port
+        connectCommand.doCommand(data);
+    }
+    public void calc_path() throws IOException {
     }
 
     public void load_data(MapDisplayer mapDisplayer) throws IOException {

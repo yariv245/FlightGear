@@ -4,9 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import viewModel.ViewModelSimulator;
 
 import java.io.FileNotFoundException;
@@ -60,10 +64,6 @@ public class SimulatorController {
 //                Point2D mouse = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 //                double dis = centerPoint.distance(mouse);
 //                if (dis > maxRadius) {
-//                    double angle = centerPoint.angle(mouse);
-//                    System.out.println("angle: " + angle);
-//                    joystick.setLayoutX(mouse.getX() + maxRadius * Math.cos(Math.toDegrees(angle)));
-//                    joystick.setLayoutY(mouseEvent.getSceneY() + maxRadius * Math.sin(Math.toDegrees(angle)));
 //
 ////                    joystick.setLayoutX();
 ////                    joystick.setLayoutY();
@@ -78,9 +78,35 @@ public class SimulatorController {
 
     }
 
-
-    public void open_window() throws IOException {
-        viewModelSimulator.open_window();
+    public void client_connect() throws IOException {
+//        viewModelSimulator.open_window();
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("./view/connect_view.fxml"));
+        loader.setController(this);
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Connect server");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+    public void calc_path() throws IOException {
+//        viewModelSimulator.open_window();
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("./view/connect_view.fxml"));
+        loader.setController(this);
+        Parent root = null;
+        try {
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage primaryStage = new Stage();
+        primaryStage.setTitle("Connect server");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
     }
 
     public void load_data() throws IOException {
