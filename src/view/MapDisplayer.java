@@ -1,4 +1,4 @@
-package model;
+package view;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.event.Event;
@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 
 public class MapDisplayer extends Canvas {
 
-    public IntegerProperty[][] mapData;
+    public int[][] mapData;
     double minElement = Double.MAX_VALUE;
     double maxElement = 0;
     GraphicsContext gc;
@@ -23,39 +23,33 @@ public class MapDisplayer extends Canvas {
     public MapDisplayer() {
 
         gc = getGraphicsContext2D();
-
-        this.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent arg0) {
-//                System.out.println("The X on the matrix is : " + arg0.getX() / 2);
-//                System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
-
-
-                gc.strokeText("X", arg0.getX(), arg0.getY());
-            }
-
+        this.setOnMouseClicked(arg0 -> {
+            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
+            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
+            gc.strokeText("X", arg0.getX(), arg0.getY());
+            // TODO: אני מניח תפילין 10 דקות פה
         });
+
     }
 
-    public void setMapData(IntegerProperty[][] mapData) {
+    public void setMapData(int[][] mapData) {
         this.mapData = mapData;
 
         //Finding the maxiumum and minimum of the elements of the matrix
         for (int i = 0; i < mapData.length; i++)
             for (int j = 0; j < mapData[i].length; j++) {
-                if (minElement > mapData[i][j].get()) {
-                    minElement = mapData[i][j].get();
+                if (minElement > mapData[i][j]) {
+                    minElement = mapData[i][j];
                 }
-                if (maxElement < mapData[i][j].get()) {
-                    maxElement = mapData[i][j].get();
+                if (maxElement < mapData[i][j]) {
+                    maxElement = mapData[i][j];
                 }
             }
 
         //Filling the values by the CSV File values
         for (int i = 0; i < mapData.length; i++)
             for (int j = 0; j < mapData[i].length; j++) {
-                mapData[i][j].setValue((mapData[i][j].get() - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
+                mapData[i][j] = (int)((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
             }
 
         reDraw();
@@ -75,7 +69,7 @@ public class MapDisplayer extends Canvas {
         //Setting the colors for each element in the matrix by his value
         for (int i = 0; i < mapData.length; i++)
             for (int j = 0; j < mapData[i].length; j++) {
-                int tmp = mapData[i][j].get();
+                int tmp = mapData[i][j];
                 gc.setFill(Color.rgb((255 - tmp), (0 + tmp), 0));
                 gc.fillRect((j * width), (i * height), width, height);
             }

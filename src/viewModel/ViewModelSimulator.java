@@ -1,14 +1,20 @@
 package viewModel;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.ConnectController;
+import view.MapDisplayer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.util.*;
 
 public class ViewModelSimulator {
 
@@ -27,13 +33,36 @@ public class ViewModelSimulator {
         connectController.setConnectController(viewModelConnect);
     }
 
-    public void load_data() {
+    public void load_data(MapDisplayer mapDisplayer) throws IOException {
+        List<String[]> r = null;
         FileChooser fileChooser = new FileChooser();
         File file = fileChooser.showOpenDialog(new Stage());
         String pathFile = null;
         if (file != null)
             pathFile = file.getPath();
-        System.out.println(pathFile);
+
+        try (CSVReader reader = new CSVReader(new FileReader(pathFile))){
+            r = reader.readAll();
+            r.forEach(x -> System.out.println(Arrays.toString(x)));
+        } catch (CsvException e) {
+            e.printStackTrace();
+        }
+
+        int[][] csvAsInt = new int[r.size()-2][];
+
+        for(int i=2;i<r.size();i++) {
+            csvAsInt[i-2] = new int[r.get(i).length];
+
+            for (int j = 0; j < r.get(i).length; j++)
+                csvAsInt[i-2][j] = Integer.parseInt(r.get(i)[j]);
+        }
+
+        for(int i=0;i< csvAsInt.length;i++)
+            Collections.reverse(Arrays.asList(csvAsInt[i]));
+
+        mapDisplayer.setMapData(csvAsInt);
+
     }
+
 
 }

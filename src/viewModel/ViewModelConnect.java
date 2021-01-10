@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class ViewModelConnect {
 
-    //data
+    //data and logic
 
     public StringProperty ip;
     public StringProperty port;

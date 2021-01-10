@@ -10,6 +10,7 @@ import viewModel.ViewModelSimulator;
 
 public class Main extends Application {
 
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 
@@ -21,7 +22,8 @@ public class Main extends Application {
 
         ViewModelSimulator viewModelSimulator =new ViewModelSimulator();
         SimulatorController simulatorController = loader.getController();
-        simulatorController.setSimulatorController(viewModelSimulator);
+        simulatorController.setViewModelSimulator(viewModelSimulator);
+
     }
 
 
