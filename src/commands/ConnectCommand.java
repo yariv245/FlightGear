@@ -9,6 +9,7 @@ public class ConnectCommand implements Command {
 
     @Override
     public Integer doCommand(List<String> command) {
+        System.out.println("\nConnect server command start for IP: "+command.get(0)+" Port: "+command.get(1));
         new Thread(() -> connectServer(command.get(0), Integer.parseInt(command.get(1)))).start();
         return 2;
     }
@@ -18,7 +19,7 @@ public class ConnectCommand implements Command {
         while (!stop) {
             try {
                 client = new Socket(ip, port);
-//				System.out.println("Connected to FlightSimulator server");
+				System.out.println("Connected to FlightSimulator server PORT: "+client.getPort());
                 stop = true;
             } catch (IOException e) {
                 try {

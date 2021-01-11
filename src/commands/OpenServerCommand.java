@@ -15,6 +15,7 @@ public class OpenServerCommand implements Command {
 
     @Override
     public Integer doCommand(List<String> command) {
+        System.out.println("Open server command start port: "+command.get(0) + " Frequency: "+command.get(1));
         new Thread(() -> runServer(Integer.parseInt(command.get(0)), Integer.parseInt(command.get(1)))).start();
         return 2;
     }
@@ -24,11 +25,13 @@ public class OpenServerCommand implements Command {
             server = new ServerSocket(port);
             server.setSoTimeout(freq * 10);
             boolean stop = false;
+            System.out.print("Waiting for clients\n");
             while (!stop) {
                 try {
                     // Reach to this point
+                    System.out.print(".");
                     Socket client = server.accept();
-//					System.out.println("client Connected");
+					System.out.println("Client Connected");
                     BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                     String line = null;
                     while ((line = in.readLine()) != null) {// simX + "," + simY + "," + simZ

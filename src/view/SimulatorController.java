@@ -62,8 +62,8 @@ public class SimulatorController {
 
     public void client_connect() {
         connect_popup(); // function to open the connect popup
-        viewModelSimulator.client_ip.bind(IP_textField.textProperty());
-        viewModelSimulator.client_port.bind(port_textField.textProperty());
+        viewModelSimulator.server_ip.bind(IP_textField.textProperty());
+        viewModelSimulator.server_port.bind(port_textField.textProperty());
         connectBtn.setOnAction(actionEvent -> { // set handler to connect button for client connection
             try {
                 viewModelSimulator.client_connect();
@@ -87,12 +87,6 @@ public class SimulatorController {
 
     public void load_data() throws IOException {
         viewModelSimulator.load_data(mapDisplayer);
-        mapDisplayer.setOnMouseClicked(arg0 -> {
-            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
-            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
-            mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
-            // TODO: אני מניח תפילין 10 דקות פה
-        });
     }
 
     public void connect_popup(){

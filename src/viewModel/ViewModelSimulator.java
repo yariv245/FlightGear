@@ -36,12 +36,11 @@ public class ViewModelSimulator {
 
     public void client_connect() throws IOException {
         //do the actual connection by connect command
-//        ConnectCommand connectCommand = new ConnectCommand();
-//        ArrayList<String> data = new ArrayList<>();
-//        data.add(ip.getValue());//ip
-//        data.add(port.getValue());//port
-//        connectCommand.doCommand(data);
-        System.out.println("Try to connect");
+        ConnectCommand connectCommand = new ConnectCommand();
+        ArrayList<String> data = new ArrayList<>();
+        data.add(server_ip.getValue());//ip
+        data.add(server_port.getValue());//port
+        connectCommand.doCommand(data);
     }
     public void calc_path() throws IOException {
         System.out.println("Try to server connect");
@@ -74,6 +73,11 @@ public class ViewModelSimulator {
         for (int i = 0; i < csvAsInt.length; i++)
             Collections.reverse(Arrays.asList(csvAsInt[i]));
 
+        mapDisplayer.setOnMouseClicked(arg0 -> {
+            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
+            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
+            mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
+        });
         mapDisplayer.setMapData(csvAsInt);
 
     }

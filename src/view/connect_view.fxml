@@ -30,7 +30,7 @@
         <HBox alignment="CENTER">
             <children>
                 <Label prefWidth="70.0" text="port"/>
-                <PasswordField fx:id="port_textField" promptText="PORT"/>
+                <TextField fx:id="port_textField" promptText="PORT"/>
             </children>
         </HBox>
         <HBox alignment="CENTER">

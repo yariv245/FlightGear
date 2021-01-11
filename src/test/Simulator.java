@@ -21,7 +21,7 @@ public class Simulator {
         simY = r.nextInt(1000);
         simZ = r.nextInt(1000);
         new Thread(() -> runServer()).start();
-        new Thread(() -> runClient()).start();
+//        new Thread(() -> runClient()).start();
     }
 
     private void runClient() {
