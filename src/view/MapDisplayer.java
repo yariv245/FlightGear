@@ -14,22 +14,14 @@ public class MapDisplayer extends Canvas {
     public int[][] mapData;
     double minElement = Double.MAX_VALUE;
     double maxElement = 0;
-    GraphicsContext gc;
+    public GraphicsContext gc;
     double height, width, WidthCanvas, HeightCanvas;
     double max_color = 255;
     double min_color = 0;
 
 
     public MapDisplayer() {
-
         gc = getGraphicsContext2D();
-        this.setOnMouseClicked(arg0 -> {
-            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
-            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
-            gc.strokeText("X", arg0.getX(), arg0.getY());
-            // TODO: אני מניח תפילין 10 דקות פה
-        });
-
     }
 
     public void setMapData(int[][] mapData) {

@@ -44,7 +44,7 @@ public class ViewModelSimulator {
         System.out.println("Try to connect");
     }
     public void calc_path() throws IOException {
-        System.out.println("Try to server  connect");
+        System.out.println("Try to server connect");
     }
 
     public void load_data(MapDisplayer mapDisplayer) throws IOException {

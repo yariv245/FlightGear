@@ -1,8 +1,5 @@
 package view;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -10,14 +7,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import viewModel.ViewModelSimulator;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 public class SimulatorController {
     //references for fxml
@@ -39,10 +33,10 @@ public class SimulatorController {
 
     @FXML
     public void initialize() {
-        initializeJoystic();
+        initializeJoystick();
     }
 
-    public void initializeJoystic(){
+    public void initializeJoystick(){
         joystick.setOnMouseDragged(mouseEvent -> {
             Point2D centerPoint = new Point2D(651, 196);
             Point2D mouse = new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY());
@@ -64,10 +58,9 @@ public class SimulatorController {
     }
     public void setViewModelSimulator(ViewModelSimulator vm) {
         this.viewModelSimulator = vm;
-
     }
 
-    public void client_connect() throws IOException {
+    public void client_connect() {
         connect_popup(); // function to open the connect popup
         viewModelSimulator.client_ip.bind(IP_textField.textProperty());
         viewModelSimulator.client_port.bind(port_textField.textProperty());
@@ -79,7 +72,7 @@ public class SimulatorController {
             }
         });
     }
-    public void calc_path() throws IOException {
+    public void calc_path() {
         connect_popup();
         viewModelSimulator.server_ip.bind(IP_textField.textProperty());
         viewModelSimulator.server_port.bind(port_textField.textProperty());
@@ -94,7 +87,12 @@ public class SimulatorController {
 
     public void load_data() throws IOException {
         viewModelSimulator.load_data(mapDisplayer);
-
+        mapDisplayer.setOnMouseClicked(arg0 -> {
+            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
+            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
+            mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
+            // TODO: אני מניח תפילין 10 דקות פה
+        });
     }
 
     public void connect_popup(){
