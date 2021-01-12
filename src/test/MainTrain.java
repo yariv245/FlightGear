@@ -14,14 +14,10 @@ public class MainTrain {
     public static void main(String[] args) throws IOException {
 
         int port = 5400;
-        Simulator sim = new Simulator(port); // sim_client on port+1, sim_server on port
-
-        String[] connectString = {
-                "openDataServer " + (port + 1) + " 4",
-                "connect 127.0.0.1 " + port,
-        };
-
-        MyInterpreter.interpret(connectString);
+        String ip = "127.0.0.1";
+        Simulator.startServer(port); // start Simulator server
+        MyInterpreter.startServer(port +1); // port 5401
+        MyInterpreter.startClient(ip,port); // connect interpreter to Simulator server
 
 //        int port = 5400;
 //        Simulator sim = new Simulator(port); // sim_client on port+1, sim_server on port

@@ -12,6 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import test.MyInterpreter;
+import test.Simulator;
 import view.ConnectController;
 import view.MapDisplayer;
 
@@ -36,11 +38,9 @@ public class ViewModelSimulator {
 
     public void client_connect() throws IOException {
         //do the actual connection by connect command
-        ConnectCommand connectCommand = new ConnectCommand();
-        ArrayList<String> data = new ArrayList<>();
-        data.add(server_ip.getValue());//ip
-        data.add(server_port.getValue());//port
-        connectCommand.doCommand(data);
+        String ip = server_ip.getValue();
+        int port = Integer.parseInt(server_port.getValue());
+        Simulator.startClient(ip,port);
     }
     public void calc_path() throws IOException {
         System.out.println("Try to server connect");

@@ -11,26 +11,25 @@ import java.util.Random;
 
 public class Simulator {
 
-    double simX, simY, simZ;
-    private int port;
-    private volatile boolean stop;
+    private static volatile boolean stop;
 
-    public Simulator(int port) {
-        this.port = port;
-        Random r = new Random();
-        simY = r.nextInt(1000);
-        simZ = r.nextInt(1000);
-        new Thread(() -> runServer()).start();
-//        new Thread(() -> runClient()).start();
+
+    public static void startClient(String ip, int port) {
+        new Thread(() -> runClient(ip, port)).start();
     }
 
-    private void runClient() {
+    public static void startServer(int port) {
+        new Thread(() -> runServer(port)).start();
+    }
+
+    private static void runClient(String ip, int port) {
         while (!stop) {
             try {
-                Socket interpreter = new Socket("127.0.0.1", port + 1);
+                Socket interpreter = new Socket(ip, port);
                 PrintWriter out = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
-                    out.println(simX + "," + simY + "," + simZ);
+//                    out.println(simX + "," + simY + "," + simZ);
+
                     out.flush();
                     try {
                         Thread.sleep(100);
@@ -48,24 +47,23 @@ public class Simulator {
         }
     }
 
-    private void runServer() {
+    private static void runServer(int port) {
         try {
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
+            System.out.print("Simulator server: Waiting for clients\n");
             while (!stop) {
                 try {
+                    System.out.print(".");
                     Socket client = server.accept();
+                    System.out.println("Simulator server: Client Connected");
                     BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                     String line = null;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
 //							System.out.println(line);
-                            if (line.startsWith("set simX"))
-                                simX = Double.parseDouble(line.split(" ")[2]);
-                            if (line.startsWith("set simY"))
-                                simY = Double.parseDouble(line.split(" ")[2]);
-                            if (line.startsWith("set simZ"))
-                                simZ = Double.parseDouble(line.split(" ")[2]);
+//                            if (line.startsWith("set simX"))
+//                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {
                         }
                     }
