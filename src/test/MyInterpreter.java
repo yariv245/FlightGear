@@ -49,7 +49,7 @@ public class MyInterpreter {
         int reuslt = 0;
         ArrayList<String> loopLines = new ArrayList<String>();
         Boolean insertLine = false;
-        for (String line : lines) {
+        for (String line : lines) {//TODO:consider to remove this for and change the argument to String line
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e1) {
@@ -111,6 +111,7 @@ public class MyInterpreter {
     public static void startServer(int port) {
         new Thread(() -> runServer(port)).start();
     }
+
     private static void runClient(String ip,int port) {
         while (!stop) {
             try {
@@ -149,6 +150,10 @@ public class MyInterpreter {
                     String line = null;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
+                            System.out.println("Interpreter server: "+line);
+                            String[] lines = new String[0];
+                            lines[0] = line;
+                            MyInterpreter.interpret(lines);
 //                            if (line.startsWith("set simX"))
 //                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {

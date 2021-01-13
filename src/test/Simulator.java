@@ -12,7 +12,7 @@ import java.util.Random;
 public class Simulator {
 
     private static volatile boolean stop;
-
+    private static PrintWriter outClient = null;
 
     public static void startClient(String ip, int port) {
         new Thread(() -> runClient(ip, port)).start();
@@ -21,22 +21,28 @@ public class Simulator {
     public static void startServer(int port) {
         new Thread(() -> runServer(port)).start();
     }
+    public static void sentToServer(String[] msg) {
+        if(outClient==null)
+            return;
+        for(String line :msg){
+            outClient.println(line);
+            outClient.flush();
+        }
+    }
 
     private static void runClient(String ip, int port) {
         while (!stop) {
             try {
                 Socket interpreter = new Socket(ip, port);
-                PrintWriter out = new PrintWriter(interpreter.getOutputStream());
+                outClient = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
 //                    out.println(simX + "," + simY + "," + simZ);
-
-                    out.flush();
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e1) {
                     }
                 }
-                out.close();
+                outClient.close();
                 interpreter.close();
             } catch (IOException e) {
                 try {
@@ -49,6 +55,8 @@ public class Simulator {
 
     private static void runServer(int port) {
         try {
+            double aileron = 0;
+            double elevator = 0;
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
             System.out.print("Simulator server: Waiting for clients\n");
@@ -61,7 +69,7 @@ public class Simulator {
                     String line = null;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
-//							System.out.println(line);
+							System.out.println(line);
 //                            if (line.startsWith("set simX"))
 //                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {

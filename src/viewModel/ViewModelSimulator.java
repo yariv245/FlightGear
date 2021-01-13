@@ -2,36 +2,35 @@ package viewModel;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import commands.ConnectCommand;
-import javafx.application.HostServices;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import test.MyInterpreter;
+import model.Model;
 import test.Simulator;
-import view.ConnectController;
 import view.MapDisplayer;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.util.*;
 
-public class ViewModelSimulator {
+public class ViewModelSimulator extends Observable implements Observer{
 
+    Model model;
     //functions and data
-    public StringProperty client_ip;
-    public StringProperty client_port;
 
     public StringProperty server_ip;
     public StringProperty server_port;
-    public ViewModelSimulator(){
-        client_ip = new SimpleStringProperty();
-        client_port = new SimpleStringProperty();
+
+    public DoubleProperty joystickValX = new SimpleDoubleProperty();
+    public DoubleProperty joystickValY = new SimpleDoubleProperty();
+
+    public DoubleProperty rudderVal = new SimpleDoubleProperty();
+    public DoubleProperty throttleVal = new SimpleDoubleProperty();
+
+    public ViewModelSimulator(Model model){
+        this.model = model;
         server_ip = new SimpleStringProperty();
         server_port = new SimpleStringProperty();
     }
@@ -40,10 +39,22 @@ public class ViewModelSimulator {
         //do the actual connection by connect command
         String ip = server_ip.getValue();
         int port = Integer.parseInt(server_port.getValue());
-        Simulator.startClient(ip,port);
+        model.connectToServer(ip,port);
     }
     public void calc_path() throws IOException {
         System.out.println("Try to server connect");
+    }
+
+    public void joystickMovement(){
+        model.sendJoystickValToSim(this.joystickValX.get(),this.joystickValY.get());
+    }
+
+    public void rudderChange(){
+        model.rudderChange(this.rudderVal.get());
+    }
+
+    public void throttleChange(){
+        model.throttleChange(this.throttleVal.get());
     }
 
     public void load_data(MapDisplayer mapDisplayer) throws IOException {
@@ -82,5 +93,8 @@ public class ViewModelSimulator {
 
     }
 
-
+    @Override
+    public void update(Observable o, Object arg) {
+        //Notify
+    }
 }
