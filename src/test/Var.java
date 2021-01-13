@@ -41,25 +41,26 @@ public class Var extends Observable implements Observer {
         if (arg.getClass() == (d.getClass())) {
             if (this.value != (double) arg) {
                 this.setValue((double) arg);
-
-                if (this.getName().contains("sim")) {
-                    String msg = "set " + this.getName() + " " + this.getValue();
+                // if the current Var bound to Var
+                if (this.getName().isEmpty()) { // check if the name parm in Var is empty
+                    String msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
                     PrintWriter out = null;
-                    try {
-                        while (ConnectCommand.client == null || ConnectCommand.client.isClosed()) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                        }
-                        out = new PrintWriter(ConnectCommand.client.getOutputStream());
-                        out.println(msg);
-                        out.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    MyInterpreter.sentToServer(msg); // send to server the message to change the parameter
+//                    try {
+//                        while (ConnectCommand.client == null || ConnectCommand.client.isClosed()) {
+//                            try {
+//                                Thread.sleep(1000);
+//                            } catch (InterruptedException e) {
+//                                // TODO Auto-generated catch block
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        out = new PrintWriter(ConnectCommand.client.getOutputStream());
+//                        out.println(msg);
+//                        out.flush();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
                 }
                 ;
             }

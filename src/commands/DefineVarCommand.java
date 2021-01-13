@@ -28,6 +28,7 @@ public class DefineVarCommand implements Command {
                 MyInterpreter.putSymbolTable(name);
             }
         }
+        System.out.println("var defined: " + name);
         return 1;
 
     }

@@ -21,13 +21,27 @@ public class Simulator {
     public static void startServer(int port) {
         new Thread(() -> runServer(port)).start();
     }
-    public static void sentToServer(String[] msg) {
-        if(outClient==null)
+
+    public static void sentToServer(String[] lines) {
+        if (outClient == null)
             return;
-        for(String line :msg){
+
+        for (String line : lines) {
             outClient.println(line);
             outClient.flush();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public static void sentToServer(String line) {
+        if (outClient == null)
+            return;
+        outClient.println(line);
+        outClient.flush();
     }
 
     private static void runClient(String ip, int port) {
@@ -69,7 +83,7 @@ public class Simulator {
                     String line = null;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
-							System.out.println(line);
+                            System.out.println("Simulator server: " + line);
 //                            if (line.startsWith("set simX"))
 //                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {
@@ -77,6 +91,7 @@ public class Simulator {
                     }
                     in.close();
                     client.close();
+                    System.out.println("Simulator server: Client DisConnected");
                 } catch (SocketTimeoutException e) {
                 }
             }

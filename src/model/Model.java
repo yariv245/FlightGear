@@ -37,6 +37,13 @@ public class Model extends Observable {
     }
 
     public void connectToServer(String ip, int port) {
-        Simulator.startClient(ip,port);
+        Simulator.startClient(ip,port); // TODO:Need to check when it finish
+        String[] line = {
+                "var aileron",
+                "var elevator",
+                "aileron = bind simAileron",
+                "elevator = bind simElevator",
+        };
+        Simulator.sentToServer(line); // TODO : send the array to fast!
     }
 }

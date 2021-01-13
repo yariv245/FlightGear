@@ -20,6 +20,8 @@ import commands.UpdateCommand;
 
 public class MyInterpreter {
     private static volatile boolean stop;
+    private static PrintWriter outClient = null;
+    private static boolean isRun = false;
     static final Map<String, Command> commandsMap = createCommandMap();
 
     private static Map<String, Command> createCommandMap() {
@@ -38,9 +40,11 @@ public class MyInterpreter {
 
     private static HashMap<String, Var> createSymbolTable() {
         HashMap<String, Var> map = new HashMap<String, Var>();
-        map.put("simX", new Var(0, "simX"));
-        map.put("simY", new Var(0, "simY"));
-        map.put("simZ", new Var(0, "simZ"));
+        map.put("simAileron", new Var(0, "/controls/flight/aileron"));
+        map.put("simElevator", new Var(0, "/controls/flight/elevator"));
+        map.put("rudder", new Var(0, "rudder"));
+        map.put("throttle", new Var(0, "throttle"));
+
         return map;
     }
 
@@ -116,16 +120,16 @@ public class MyInterpreter {
         while (!stop) {
             try {
                 Socket interpreter = new Socket(ip, port);
-                PrintWriter out = new PrintWriter(interpreter.getOutputStream());
+                outClient = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
 //                    out.println(simX + "," + simY + "," + simZ);
-                    out.flush();
+                    outClient.flush();
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e1) {
                     }
                 }
-                out.close();
+                outClient.close();
                 interpreter.close();
             } catch (IOException e) {
                 try {
@@ -140,6 +144,8 @@ public class MyInterpreter {
         try {
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
+            Queue<String> Qlines = new ArrayDeque<>();
+            String[] lines = new String[1];
             System.out.print("MyInterpreter server: Waiting for clients\n");
             while (!stop) {
                 try {
@@ -151,9 +157,9 @@ public class MyInterpreter {
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
                             System.out.println("Interpreter server: "+line);
-                            String[] lines = new String[0];
-                            lines[0] = line;
+                            lines[0]=line;
                             MyInterpreter.interpret(lines);
+
 //                            if (line.startsWith("set simX"))
 //                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {
@@ -161,6 +167,7 @@ public class MyInterpreter {
                     }
                     in.close();
                     client.close();
+                    System.out.println("MyInterpreter server: Client DisConnected");
                 } catch (SocketTimeoutException e) {
                 }
             }
@@ -173,6 +180,22 @@ public class MyInterpreter {
         stop = true;
     }
 
+    public static void sentToServer(String[] lines) {
+        if (outClient == null)
+            return;
+        System.out.println("lines got");
 
+        for (String line : lines) {
+            outClient.println(line);
+            outClient.flush();
+        }
+    }
+
+    public static void sentToServer(String line) {
+        if (outClient == null)
+            return;
+        outClient.println(line);
+        outClient.flush();
+    }
 
 }

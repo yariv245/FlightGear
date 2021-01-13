@@ -16,6 +16,7 @@ public class UpdateCommand implements Command {
         } else { // x = 5
             String stringExp = String.join("", command); // turn the Arraylist to string for the Shunting Yard
             String[] arrayExp = stringExp.split("=");
+            System.out.println("exp: " + arrayExp[1]);
             result = ShuntingYard.calc(arrayExp[1]); // Calculate the expression
             MyInterpreter.putSymbolTable(arrayExp[0], result);
         }
