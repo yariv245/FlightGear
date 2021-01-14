@@ -12,8 +12,6 @@ public class BindCommand implements Command {
                 .addObserver(MyInterpreter.getSymbolTable(command.get(3)));
         MyInterpreter.getSymbolTable(command.get(3))
                 .addObserver(MyInterpreter.getSymbolTable(command.get(0)));
-        System.out.println(command.get(0) + " bind to: " + command.get(3));
-
         return 3;
     }
 

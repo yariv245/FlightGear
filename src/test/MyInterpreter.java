@@ -49,26 +49,27 @@ public class MyInterpreter {
     }
 
     public static int interpret(String[] lines) {
-        symbolTable = createSymbolTable();
         int reuslt = 0;
         ArrayList<String> loopLines = new ArrayList<String>();
         Boolean insertLine = false;
         for (String line : lines) {//TODO:consider to remove this for and change the argument to String line
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e1) {
+//                e1.printStackTrace();
+//            }
             if (line.contains("while")) {
                 insertLine = true;
             } else if (line.contains("}")) {
                 insertLine = false;
                 new ConditionParser().doCommand(loopLines);
             }
+
             if (insertLine)
                 loopLines.add(line);
-            else
+            else {
                 reuslt = parser(lexer(line));
+            }
         }
         return reuslt;
     }
@@ -116,18 +117,18 @@ public class MyInterpreter {
         new Thread(() -> runServer(port)).start();
     }
 
-    private static void runClient(String ip,int port) {
+    private static void runClient(String ip, int port) {
         while (!stop) {
             try {
                 Socket interpreter = new Socket(ip, port);
                 outClient = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
 //                    out.println(simX + "," + simY + "," + simZ);
-                    outClient.flush();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e1) {
-                    }
+//                    outClient.flush();
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e1) {
+//                    }
                 }
                 outClient.close();
                 interpreter.close();
@@ -156,8 +157,8 @@ public class MyInterpreter {
                     String line = null;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
-                            System.out.println("Interpreter server: "+line);
-                            lines[0]=line;
+//                            System.out.println("Interpreter server: " + line);
+                            lines[0] = line;
                             MyInterpreter.interpret(lines);
 
 //                            if (line.startsWith("set simX"))

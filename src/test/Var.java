@@ -42,7 +42,7 @@ public class Var extends Observable implements Observer {
             if (this.value != (double) arg) {
                 this.setValue((double) arg);
                 // if the current Var bound to Var
-                if (this.getName().isEmpty()) { // check if the name parm in Var is empty
+                if (!this.getName().isEmpty()) { // check if the name parm in Var is empty
                     String msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
                     PrintWriter out = null;
                     MyInterpreter.sentToServer(msg); // send to server the message to change the parameter

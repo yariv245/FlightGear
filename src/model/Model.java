@@ -44,6 +44,11 @@ public class Model extends Observable {
                 "aileron = bind simAileron",
                 "elevator = bind simElevator",
         };
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         Simulator.sentToServer(line); // TODO : send the array to fast!
     }
 }

@@ -60,7 +60,7 @@ public class ShuntingYard {
             queue.addFirst(stack.pop());
         Expression finalExpression = buildExpression(queue);
         double answer = finalExpression.calculate();
-        return Double.parseDouble(String.format("%.3f", answer));
+        return Double.parseDouble(String.format("%.15f", answer));
     }
 
     private static boolean validations(String expression) {
@@ -72,7 +72,9 @@ public class ShuntingYard {
         Expression returnedExpression = null;
         Expression right = null;
         Expression left = null;
-        String currentExpression = queue.removeFirst();
+        String currentExpression ="0.0";
+        if(!queue.isEmpty())
+             currentExpression = queue.removeFirst();
         if (currentExpression.equals("+") || currentExpression.equals("-") || currentExpression.equals("*")
                 || currentExpression.equals("/")) {
             right = buildExpression(queue);
@@ -93,7 +95,7 @@ public class ShuntingYard {
                 break;
             default:
                 returnedExpression = new Number(
-                        Double.parseDouble(String.format("%.2f", Double.parseDouble(currentExpression))));
+                        Double.parseDouble(String.format("%.15f", Double.parseDouble(currentExpression))));
                 break;
         }
 

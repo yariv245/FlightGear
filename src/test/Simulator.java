@@ -29,11 +29,11 @@ public class Simulator {
         for (String line : lines) {
             outClient.println(line);
             outClient.flush();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -42,6 +42,11 @@ public class Simulator {
             return;
         outClient.println(line);
         outClient.flush();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void runClient(String ip, int port) {
@@ -51,10 +56,10 @@ public class Simulator {
                 outClient = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
 //                    out.println(simX + "," + simY + "," + simZ);
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e1) {
-                    }
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e1) {
+//                    }
                 }
                 outClient.close();
                 interpreter.close();
