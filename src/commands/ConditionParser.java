@@ -2,7 +2,7 @@ package commands;
 
 import java.util.List;
 
-import test.MyInterpreter;
+import servers.MyInterpreter;
 
 public class ConditionParser implements Command {
 

@@ -1,6 +1,5 @@
 package view;
 
-import expressions.ShuntingYard;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import viewModel.ViewModelSimulator;
-
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -97,11 +95,7 @@ public class SimulatorController implements Observer {
     public void client_connect() {
         connect_popup(); // function to open the connect popup
         connectBtn.setOnAction(actionEvent -> { // set handler to connect button for client connection
-            try {
-                viewModelSimulator.client_connect();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            viewModelSimulator.client_connect();
         });
     }
 
@@ -109,7 +103,7 @@ public class SimulatorController implements Observer {
         connect_popup();
         connectBtn.setOnAction(actionEvent -> { // set handler to connect button for server connection
             try {
-                viewModelSimulator.calc_path();
+                viewModelSimulator.calc_path(this.mapDisplayer.mapData);
             } catch (IOException e) {
                 e.printStackTrace();
             }

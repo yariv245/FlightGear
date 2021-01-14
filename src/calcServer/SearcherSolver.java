@@ -1,4 +1,4 @@
-package server;
+package calcServer;
 
 //
 public class SearcherSolver implements Solver<Searchable, Solution> {

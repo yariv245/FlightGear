@@ -14,7 +14,7 @@
     <children>
         <HBox alignment="CENTER" style="-fx-background-color: #e1c1c1;">
             <children>
-                <Label text="Please connect to server" textFill="#752b2b">
+                <Label text="Please connect to calcServer" textFill="#752b2b">
                     <font>
                         <Font size="14.0"/>
                     </font>

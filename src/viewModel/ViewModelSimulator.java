@@ -9,13 +9,12 @@ import javafx.beans.property.StringProperty;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Model;
-import test.Simulator;
 import view.MapDisplayer;
 
 import java.io.*;
 import java.util.*;
 
-public class ViewModelSimulator extends Observable implements Observer{
+public class ViewModelSimulator extends Observable implements Observer {
 
     Model model;
     //functions and data
@@ -29,31 +28,42 @@ public class ViewModelSimulator extends Observable implements Observer{
     public DoubleProperty rudderVal = new SimpleDoubleProperty();
     public DoubleProperty throttleVal = new SimpleDoubleProperty();
 
-    public ViewModelSimulator(Model model){
+    public DoubleProperty airplaneX = new SimpleDoubleProperty();
+    public DoubleProperty airplaneY = new SimpleDoubleProperty();
+
+    public DoubleProperty targetX = new SimpleDoubleProperty();
+    public DoubleProperty targetY = new SimpleDoubleProperty();
+
+    public DoubleProperty scale = new SimpleDoubleProperty();
+
+    public ViewModelSimulator(Model model) {
         this.model = model;
         server_ip = new SimpleStringProperty();
         server_port = new SimpleStringProperty();
     }
 
-    public void client_connect() throws IOException {
+    public void client_connect() {
         //do the actual connection by connect command
         String ip = server_ip.getValue();
         int port = Integer.parseInt(server_port.getValue());
-        model.connectToServer(ip,port);
-    }
-    public void calc_path() throws IOException {
-        System.out.println("Try to server connect");
+        model.connectToServer(ip, port);
     }
 
-    public void joystickMovement(){
-        model.sendJoystickValToSim(this.joystickValX.get(),this.joystickValY.get());
+    public void calc_path(int[][] matrix) throws IOException {
+        String ip = server_ip.getValue();
+        int port = Integer.parseInt(server_port.getValue());
+        model.connectToCalcServer(ip, port,matrix);
     }
 
-    public void rudderChange(){
+    public void joystickMovement() {
+        model.sendJoystickValToSim(this.joystickValX.get(), this.joystickValY.get());
+    }
+
+    public void rudderChange() {
         model.rudderChange(this.rudderVal.get());
     }
 
-    public void throttleChange(){
+    public void throttleChange() {
         model.throttleChange(this.throttleVal.get());
     }
 
@@ -67,12 +77,14 @@ public class ViewModelSimulator extends Observable implements Observer{
 
         try (CSVReader reader = new CSVReader(new FileReader(pathFile))) {
             r = reader.readAll();
-            r.forEach(x -> System.out.println(Arrays.toString(x)));
         } catch (CsvException e) {
             e.printStackTrace();
         }
 
         int[][] csvAsInt = new int[r.size() - 2][];
+
+        airplaneX.setValue(Double.parseDouble(r.get(0)[0]));
+        airplaneY.setValue(Double.parseDouble(r.get(0)[0]));
 
         for (int i = 2; i < r.size(); i++) {
             csvAsInt[i - 2] = new int[r.get(i).length];

@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
-import test.MyInterpreter;
+import servers.MyInterpreter;
 
 public class OpenServerCommand implements Command {
     public static ServerSocket server;

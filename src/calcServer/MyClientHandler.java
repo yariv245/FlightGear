@@ -1,4 +1,4 @@
-package server;
+package calcServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,6 +33,7 @@ public class MyClientHandler implements ClientHandler {
         try {
             String line; // "2,3,4,6,7,8"
             while (!(line = userInput.readLine()).equals("end")) {
+                System.out.println(line);
                 string_matrix.add(line);
             }
             board = convert_to_matrix(string_matrix); // Convert string_matrix to state<String> matrix
@@ -58,14 +59,14 @@ public class MyClientHandler implements ClientHandler {
                 stack = solution.getStates();
                 from = stack.pop();
                 to = stack.pop();
-                System.out.println("from: " + from.getM_state() + " to: " + to.getM_state());
+//                System.out.println("from: " + from.getM_state() + " to: " + to.getM_state());
                 String path = direction(from, to);
                 while (!stack.isEmpty()) {
                     from = to;
                     to = stack.pop();
                     path = path + "," + direction(from, to);
-                    System.out.println("from: " + from.getM_state() + " to: " + to.getM_state());
                 }
+                System.out.println(path);
                 outClient.println(path);
                 stack.clear();
             }
@@ -79,17 +80,17 @@ public class MyClientHandler implements ClientHandler {
 
     }
 
-    public String direction(State<String> to, State<String> from) {
-        if (from.getCol() > to.getCol())
-            return "Right";
-        else if (from.getRow() > to.getRow())
-            return "Down";
-        else if (from.getCol() < to.getCol())
-            return "Left";
-        else if (from.getRow() < to.getRow())
-            return "Up";
-
-        return null;
+    public String direction(State<String> from, State<String> to) {
+//        if (from.getCol() > to.getCol())
+//            return "Right";
+//        else if (from.getRow() > to.getRow())
+//            return "Down";
+//        else if (from.getCol() < to.getCol())
+//            return "Left";
+//        else if (from.getRow() < to.getRow())
+//            return "Up";
+//"From: ["+from.row+","+from.col+"] "+" To: ["+to.row+","+to.col+"]"
+        return "["+to.row+","+to.col+"]";
     }
 
     private ArrayList<ArrayList<State<String>>> convert_to_matrix(ArrayList<String> string_matrix) {

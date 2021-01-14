@@ -1,4 +1,4 @@
-package server;
+package calcServer;
 
 import java.util.PriorityQueue;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package server;
+package calcServer;
 
 //
 public interface Searcher<T> {

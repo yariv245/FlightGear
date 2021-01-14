@@ -6,12 +6,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
-import test.MyInterpreter;
-import test.Simulator;
 import view.SimulatorController;
 import viewModel.ViewModelSimulator;
 
-public class Main extends Application {
+public class MainGUI extends Application {
 
 
     @Override
