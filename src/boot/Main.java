@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.Model;
 import test.MyInterpreter;
 import test.Simulator;
 import view.SimulatorController;
@@ -22,7 +23,8 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        ViewModelSimulator viewModelSimulator = new ViewModelSimulator();
+        Model model = new Model();
+        ViewModelSimulator viewModelSimulator = new ViewModelSimulator(model);
         SimulatorController simulatorController = loader.getController();
         simulatorController.setViewModelSimulator(viewModelSimulator);
 

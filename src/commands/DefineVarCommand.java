@@ -14,6 +14,7 @@ public class DefineVarCommand implements Command {
             name = command.get(0); // Get the name of variable
             double value = MyInterpreter.getSymbolTable(command.get(3)).getValue(); // Get the value from symbol table
             MyInterpreter.putSymbolTable(name, value);
+            System.out.println(command.get(0) + " bind to: " + command.get(3));
             new BindCommand().doCommand(command);
         } else {// If expression doesn't contain "bind" => "x=5+6" || x"
             String expression = String.join("", command); // turn the Arraylist to string for the Shunting Yard

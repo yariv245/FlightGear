@@ -28,12 +28,12 @@
                 strokeWidth="2.0"/>
         <Circle fx:id="joystick" fill="DODGERBLUE" layoutX="651.0" layoutY="196.0" radius="20.0" stroke="#0400ff"
                 strokeType="INSIDE"/>
-        <Slider fx:id="throttle_slider" layoutX="531.0" layoutY="125.0" orientation="VERTICAL" value="50.0"/>
+        <Slider fx:id="throttle_slider" layoutX="531.0" layoutY="125.0" orientation="VERTICAL" value="0" min="0" max="1"/>
         <Text layoutX="725.0" layoutY="204.0" rotate="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="⬸elevator⤑"/>
         <Text layoutX="537.0" layoutY="199.0" rotate="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="throttle"/>
         <Text layoutX="633.0" layoutY="300.0" strokeType="OUTSIDE" strokeWidth="0.0" text="rudder"/>
         <Text layoutX="621.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="⬸aileron⤑"/>
-        <Slider fx:id="rudder_slider" layoutX="581.0" layoutY="318.0" value="50.0"/>
+        <Slider fx:id="rudder_slider" layoutX="581.0" layoutY="318.0" value="0" min="-1" max="1"/>
         <RadioButton fx:id="autoPilot_radio_btn" layoutX="369.0" layoutY="29.0" mnemonicParsing="false"
                      text="Auto Pilot"/>
         <TextArea layoutX="303.0" layoutY="65.0" prefHeight="235.0" prefWidth="199.0"/>

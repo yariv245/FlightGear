@@ -13,7 +13,7 @@ public class UpdateCommand implements Command {
         if (command.contains("bind")) { // "x = bind Simx"
             MyInterpreter.putSymbolTable(command.get(0));
             new BindCommand().doCommand(command);
-        } else {
+        } else { // x = 5
             String stringExp = String.join("", command); // turn the Arraylist to string for the Shunting Yard
             String[] arrayExp = stringExp.split("=");
             result = ShuntingYard.calc(arrayExp[1]); // Calculate the expression
