@@ -97,8 +97,8 @@ public class ViewModelSimulator extends Observable implements Observer {
                 csvAsInt[i - 2][j] = Integer.parseInt(r.get(i)[j]);
         }
 
-        for (int i = 0; i < csvAsInt.length; i++)
-            Collections.reverse(Arrays.asList(csvAsInt[i]));
+//        for (int i = 0; i < csvAsInt.length; i++) TODO:remove this if not necessary
+//            Collections.reverse(Arrays.asList(csvAsInt[i]));
 
         mapDisplayer.setOnMouseClicked(arg0 -> {
             System.out.println("The X on the matrix is : " + arg0.getX() / 1.0688259109311740890688);

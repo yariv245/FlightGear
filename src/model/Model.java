@@ -86,6 +86,7 @@ public class Model extends Observable {
 //            outClient.println(airplanePositions.getKey()+","+airplanePositions.getValue());
             outClient.println(0+","+0);
 //            Send the target position
+//            outClient.println(3+","+3);
             outClient.println((int)targetY+","+(int)targetX);
 
             outClient.flush();

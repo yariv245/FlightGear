@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 public class MapDisplayer extends Canvas {
 
     public int[][] mapData;
+    public int[][] mapPaint;
     double minElement = Double.MAX_VALUE;
     double maxElement = 0;
     public GraphicsContext gc;
@@ -37,12 +38,15 @@ public class MapDisplayer extends Canvas {
                     maxElement = mapData[i][j];
                 }
             }
-
+        this.mapPaint = new int[mapData.length][];
         //Filling the values by the CSV File values
-        for (int i = 0; i < mapData.length; i++)
+        for (int i = 0; i < mapData.length; i++){
+            this.mapPaint[i] = new int[mapData[i].length];
             for (int j = 0; j < mapData[i].length; j++) {
-                mapData[i][j] = (int) ((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
+                mapPaint[i][j] = (int) ((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
             }
+        }
+
 
         reDraw();
     }
@@ -59,9 +63,9 @@ public class MapDisplayer extends Canvas {
 
 
         //Setting the colors for each element in the matrix by his value
-        for (int i = 0; i < mapData.length; i++)
-            for (int j = 0; j < mapData[i].length; j++) {
-                int tmp = mapData[i][j];
+        for (int i = 0; i < mapPaint.length; i++)
+            for (int j = 0; j < mapPaint[i].length; j++) {
+                int tmp = mapPaint[i][j];
                 gc.setFill(Color.rgb((255 - tmp), (0 + tmp), 0));
                 gc.fillRect((j * width), (i * height), width, height);
             }
