@@ -33,7 +33,7 @@ public class State<T> implements Serializable {
         this.row = row;
         this.col = col;
         this.totalCost = 0;
-        this.cost = cost;
+        this.cost = 1;
     }
 
     public boolean equals(State<T> goal) { // it�s easier to simply overload

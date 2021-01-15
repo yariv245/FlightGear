@@ -7,8 +7,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Pair;
 import servers.Simulator;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.awt.*;
+import java.io.*;
 import java.net.Socket;
 import java.util.Observable;
 
@@ -17,6 +17,9 @@ public class Model extends Observable {
 
     //Here we have to implement the calculations and functions
     public DoubleProperty scale = new SimpleDoubleProperty();
+    PrintWriter outClient = null;
+    BufferedReader inClient = null;
+    Socket socket = null;
 
     public void sendJoystickValToSim(double joystickValX, double joystickValY) {
         //Convert joystick values to FlightSimulator valid values
@@ -64,10 +67,15 @@ public class Model extends Observable {
         Simulator.sentToServer(initial);
     }
 
-    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY,double airplaneX, double airplaneY) throws IOException {
+    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) throws IOException {
         try {
-            Socket socket = new Socket(ip, port);
-            PrintWriter outClient = new PrintWriter(socket.getOutputStream());
+
+            //Check if we already created connection once
+            if (this.outClient == null) {
+                socket = new Socket(ip, port);
+                this.outClient = new PrintWriter(socket.getOutputStream());
+                this.inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            }
 
             //Send the matrix
             for (int i = 0; i < matrix.length; i++) {
@@ -82,19 +90,27 @@ public class Model extends Observable {
             outClient.println("end");
 
             //Send the airplane position
-            Pair<Integer,Integer> airplanePositions = calcPositions(airplaneX,airplaneY);
+            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
 //            outClient.println(airplanePositions.getKey()+","+airplanePositions.getValue());
-            outClient.println(0+","+0);
+            outClient.println(0 + "," + 0);
 //            Send the target position
 //            outClient.println(3+","+3);
-            outClient.println((int)targetY+","+(int)targetX);
+            outClient.println((int) targetY + "," + (int) targetX);
 
             outClient.flush();
 
             //Wait for response
-            //Do something
-            outClient.close();
-            socket.close();
+            String response = null;
+            while ((response = inClient.readLine()) == null) {
+
+            }
+
+            //Mark the returned points in white
+            setChanged();
+            notifyObservers(response);
+
+//            outClient.close();
+//            socket.close();
         } catch (IOException e) {
             System.out.println("Failed!!!");
         }

@@ -1,18 +1,17 @@
 package view;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
+
+import java.util.ArrayList;
 
 public class MapDisplayer extends Canvas {
 
     public int[][] mapData;
-    public int[][] mapPaint;
+    public int[][] mapPaintBase;
     double minElement = Double.MAX_VALUE;
     double maxElement = 0;
     public GraphicsContext gc;
@@ -38,14 +37,21 @@ public class MapDisplayer extends Canvas {
                     maxElement = mapData[i][j];
                 }
             }
-        this.mapPaint = new int[mapData.length][];
+        this.mapPaintBase = new int[mapData.length][];
         //Filling the values by the CSV File values
-        for (int i = 0; i < mapData.length; i++){
-            this.mapPaint[i] = new int[mapData[i].length];
+        for (int i = 0; i < mapData.length; i++) {
+            this.mapPaintBase[i] = new int[mapData[i].length];
             for (int j = 0; j < mapData[i].length; j++) {
-                mapPaint[i][j] = (int) ((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
+                mapPaintBase[i][j] = (int) ((mapData[i][j] - minElement) / (maxElement - minElement) * (max_color - min_color) + min_color);
             }
         }
+
+        //Ordering the matrix responsive
+        WidthCanvas = getWidth();
+        HeightCanvas = getHeight();
+
+        width = WidthCanvas / mapData[0].length;
+        height = HeightCanvas / mapData.length;
 
 
         reDraw();
@@ -54,21 +60,35 @@ public class MapDisplayer extends Canvas {
 
     public void reDraw() {
 
-        //First - Ordering the matrix responsivly
-        WidthCanvas = getWidth();
-        HeightCanvas = getHeight();
-
-        width = WidthCanvas / mapData[0].length;
-        height = HeightCanvas / mapData.length;
-
-
         //Setting the colors for each element in the matrix by his value
-        for (int i = 0; i < mapPaint.length; i++)
-            for (int j = 0; j < mapPaint[i].length; j++) {
-                int tmp = mapPaint[i][j];
+        for (int i = 0; i < mapPaintBase.length; i++)
+            for (int j = 0; j < mapPaintBase[i].length; j++) {
+                int tmp = mapPaintBase[i][j];
                 gc.setFill(Color.rgb((255 - tmp), (0 + tmp), 0));
                 gc.fillRect((j * width), (i * height), width, height);
             }
+    }
+
+    public void drawPath(String stringPositions) {
+        ArrayList<Pair<Integer, Integer>> pairsPos = stringToPosition(stringPositions);
+
+        for (Pair pair : pairsPos) {
+            gc.setFill(Color.rgb(0, 0, 0));
+            gc.fillRect(((int) pair.getValue() * width), ((int) pair.getKey() * height), width, height);
+        }
+
+    }
+
+    private ArrayList<Pair<Integer, Integer>> stringToPosition(String stringPositions) {
+        String[] stringPosList = stringPositions.split("-"); //Convert x1,y1-x2,y2 to array that holds string template:x1,y1
+        ArrayList<Pair<Integer, Integer>> pairsPos = new ArrayList<>();
+
+        for (String pos : stringPosList) //Convert the x1,y1 to Pair(int1 ,int2)
+        {
+            String[] nums= pos.split(","); // convert string: "x1,y1" to array = {"x1","y1"}
+            pairsPos.add(new Pair(Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
+        }
+        return pairsPos;
     }
 
 }

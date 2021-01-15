@@ -82,6 +82,7 @@ public class SimulatorController implements Observer {
         viewModelSimulator.joystickValY.bind(this.joystickValY);
         viewModelSimulator.throttleVal.bind(throttle_slider.valueProperty());
         viewModelSimulator.rudderVal.bind(rudder_slider.valueProperty());
+        this.viewModelSimulator.addObserver(this);
     }
 
     public void rudderChange(){
@@ -135,6 +136,6 @@ public class SimulatorController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
+        this.mapDisplayer.drawPath(arg.toString());
     }
 }

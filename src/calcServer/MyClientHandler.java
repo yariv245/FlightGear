@@ -64,7 +64,7 @@ public class MyClientHandler implements ClientHandler {
                 while (!stack.isEmpty()) {
                     from = to;
                     to = stack.pop();
-                    path = path + "," + direction(from, to);
+                    path = path + "-" + direction(from, to);
                 }
                 System.out.println(path);
                 outClient.println(path);
@@ -90,7 +90,7 @@ public class MyClientHandler implements ClientHandler {
 //        else if (from.getRow() < to.getRow())
 //            return "Up";
 //"From: ["+from.row+","+from.col+"] "+" To: ["+to.row+","+to.col+"]"
-        return "["+to.row+","+to.col+"]";
+        return to.row+","+to.col;
     }
 
     private ArrayList<ArrayList<State<String>>> convert_to_matrix(ArrayList<String> string_matrix) {

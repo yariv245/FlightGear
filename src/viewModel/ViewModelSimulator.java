@@ -41,6 +41,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         server_ip = new SimpleStringProperty();
         server_port = new SimpleStringProperty();
         model.scale.bindBidirectional(this.scale);
+        this.model.addObserver(this);
     }
 
     public void client_connect() {
@@ -113,6 +114,9 @@ public class ViewModelSimulator extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        //Notify
+        //Notify just arrived
+//        System.out.println(arg.toString());
+        setChanged();
+        notifyObservers(arg);
     }
 }
