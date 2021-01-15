@@ -33,7 +33,7 @@ public class MyClientHandler implements ClientHandler {
         try {
             String line; // "2,3,4,6,7,8"
             while (!(line = userInput.readLine()).equals("end")) {
-                System.out.println(line);
+//                System.out.println(line);
                 string_matrix.add(line);
             }
             board = convert_to_matrix(string_matrix); // Convert string_matrix to state<String> matrix

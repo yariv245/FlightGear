@@ -28,7 +28,7 @@ public class ViewModelSimulator extends Observable implements Observer {
     public DoubleProperty rudderVal = new SimpleDoubleProperty();
     public DoubleProperty throttleVal = new SimpleDoubleProperty();
 
-    public DoubleProperty airplaneX = new SimpleDoubleProperty();
+    public DoubleProperty airplaneX = new SimpleDoubleProperty();//Todo: bind this prop to realtime airplane pos
     public DoubleProperty airplaneY = new SimpleDoubleProperty();
 
     public DoubleProperty targetX = new SimpleDoubleProperty();
@@ -40,6 +40,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         this.model = model;
         server_ip = new SimpleStringProperty();
         server_port = new SimpleStringProperty();
+        model.scale.bindBidirectional(this.scale);
     }
 
     public void client_connect() {
@@ -52,7 +53,7 @@ public class ViewModelSimulator extends Observable implements Observer {
     public void calc_path(int[][] matrix) throws IOException {
         String ip = server_ip.getValue();
         int port = Integer.parseInt(server_port.getValue());
-        model.connectToCalcServer(ip, port,matrix);
+        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), airplaneX.get(), airplaneY.get());
     }
 
     public void joystickMovement() {
@@ -84,7 +85,10 @@ public class ViewModelSimulator extends Observable implements Observer {
         int[][] csvAsInt = new int[r.size() - 2][];
 
         airplaneX.setValue(Double.parseDouble(r.get(0)[0]));
-        airplaneY.setValue(Double.parseDouble(r.get(0)[0]));
+        airplaneY.setValue(Double.parseDouble(r.get(0)[1]));
+
+        scale.setValue(Double.parseDouble(r.get(1)[0]));
+        System.out.println(r.size() + "," + r.get(5).length);
 
         for (int i = 2; i < r.size(); i++) {
             csvAsInt[i - 2] = new int[r.get(i).length];
@@ -97,9 +101,11 @@ public class ViewModelSimulator extends Observable implements Observer {
             Collections.reverse(Arrays.asList(csvAsInt[i]));
 
         mapDisplayer.setOnMouseClicked(arg0 -> {
-            System.out.println("The X on the matrix is : " + arg0.getX() / 2);
-            System.out.println("The Y on the matrix is : " + arg0.getY() / 2);
+            System.out.println("The X on the matrix is : " + arg0.getX() / 1.0688259109311740890688);
+            System.out.println("The Y on the matrix is : " + arg0.getY() / 1.546052631578947368421);
             mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
+            targetX.setValue(arg0.getX() / 1.0688259109311740890688);
+            targetY.setValue(arg0.getY() / 1.546052631578947368421);
         });
         mapDisplayer.setMapData(csvAsInt);
 
