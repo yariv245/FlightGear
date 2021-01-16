@@ -18,7 +18,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class SimulatorController implements Observer {
-    //references for fxml
 
     ViewModelSimulator viewModelSimulator;
     @FXML
@@ -70,16 +69,15 @@ public class SimulatorController implements Observer {
                 joystick.setLayoutY(mouseEvent.getSceneY());
             }
             viewModelSimulator.joystickMovement();
-
         });
-
-
 
         joystick.setOnMouseReleased(mouseDragEvent -> {
             joystick.setLayoutX(651);
             joystick.setLayoutY(196);
+            viewModelSimulator.joystickMovement();
         });
     }
+
     public void setViewModelSimulator(ViewModelSimulator vm) {
         viewModelSimulator = vm;
         viewModelSimulator.joystickValX.bind(this.joystickValX);
