@@ -34,6 +34,8 @@ public class SimulatorController implements Observer {
     @FXML
     Button connectBtn;
     @FXML
+    Button calcPath_btn;
+    @FXML
     Slider rudder_slider;
     @FXML
     Slider throttle_slider;
@@ -41,6 +43,8 @@ public class SimulatorController implements Observer {
     double maxRadius = 80;
     DoubleProperty joystickValX = new SimpleDoubleProperty();
     DoubleProperty joystickValY = new SimpleDoubleProperty();
+
+    Stage primaryStage;
 
     @FXML
     public void initialize() {
@@ -97,6 +101,8 @@ public class SimulatorController implements Observer {
         connect_popup(); // function to open the connect popup
         connectBtn.setOnAction(actionEvent -> { // set handler to connect button for client connection
             viewModelSimulator.client_connect();
+            if(primaryStage!=null)
+                primaryStage.close();
         });
     }
 
@@ -108,6 +114,10 @@ public class SimulatorController implements Observer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if(primaryStage!=null)
+                primaryStage.close();
+            calcPath_btn.setDisable(true);
+            calcPath_btn.setText("Connected");
         });
     }
 
@@ -124,7 +134,7 @@ public class SimulatorController implements Observer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Stage primaryStage = new Stage();
+        primaryStage = new Stage();
         primaryStage.setTitle("Connect");
         primaryStage.setScene(new Scene(root));
 

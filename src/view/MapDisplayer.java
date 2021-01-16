@@ -64,6 +64,12 @@ public class MapDisplayer extends Canvas {
         for (int i = 0; i < mapPaintBase.length; i++)
             for (int j = 0; j < mapPaintBase[i].length; j++) {
                 int tmp = mapPaintBase[i][j];
+                gc.setFill(Color.rgb(255, 255, 255));
+                gc.fillRect((j * width), (i * height), width, height);
+            }
+        for (int i = 0; i < mapPaintBase.length; i++)
+            for (int j = 0; j < mapPaintBase[i].length; j++) {
+                int tmp = mapPaintBase[i][j];
                 gc.setFill(Color.rgb((255 - tmp), (0 + tmp), 0));
                 gc.fillRect((j * width), (i * height), width, height);
             }

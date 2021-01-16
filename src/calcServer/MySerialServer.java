@@ -29,10 +29,11 @@ public class MySerialServer implements Server {
     @Override
     public void open(int port, ClientHandler ch) throws IOException {
         ServerSocket server = new ServerSocket(port);
+        Socket aClient = null;
         server.setSoTimeout(1000);
         while (!stop) {
             try {
-                Socket aClient = server.accept();
+                aClient = server.accept();
                 System.out.println("Client is conected");
 
                 try {
@@ -40,6 +41,7 @@ public class MySerialServer implements Server {
                     aClient.getInputStream().close();
                     aClient.getOutputStream().close();
                     aClient.close();
+
                 } catch (IOException e) {
                     /* ... */
                 }

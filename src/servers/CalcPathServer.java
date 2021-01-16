@@ -25,8 +25,6 @@ public class CalcPathServer {
 	}
 
 	public static void stopServer() {
-		// put the code here that stops your server
-		// for example:
 		s.stop();
     }
 

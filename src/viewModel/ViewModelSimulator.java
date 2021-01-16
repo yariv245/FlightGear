@@ -36,6 +36,9 @@ public class ViewModelSimulator extends Observable implements Observer {
 
     public DoubleProperty scale = new SimpleDoubleProperty();
 
+    private boolean firstTime = true;
+    private boolean calculating = false;
+
     public ViewModelSimulator(Model model) {
         this.model = model;
         server_ip = new SimpleStringProperty();
@@ -102,11 +105,23 @@ public class ViewModelSimulator extends Observable implements Observer {
 //            Collections.reverse(Arrays.asList(csvAsInt[i]));
 
         mapDisplayer.setOnMouseClicked(arg0 -> {
-            System.out.println("The X on the matrix is : " + arg0.getX() / 1.0688259109311740890688);
-            System.out.println("The Y on the matrix is : " + arg0.getY() / 1.546052631578947368421);
-            mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
-            targetX.setValue(arg0.getX() / 1.0688259109311740890688);
-            targetY.setValue(arg0.getY() / 1.546052631578947368421);
+            if(!calculating) {
+                targetX.setValue(arg0.getX() / 1.0688259109311740890688);
+                targetY.setValue(arg0.getY() / 1.546052631578947368421);
+                if (!firstTime) {
+                    mapDisplayer.reDraw();
+                    try {
+                        this.calc_path(mapDisplayer.mapData);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+//            System.out.println("The X on the matrix is : " + arg0.getX() / 1.0688259109311740890688);
+//            System.out.println("The Y on the matrix is : " + arg0.getY() / 1.546052631578947368421);
+                mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
+                calculating= true;
+            }
+
         });
         mapDisplayer.setMapData(csvAsInt);
 
@@ -118,5 +133,7 @@ public class ViewModelSimulator extends Observable implements Observer {
 //        System.out.println(arg.toString());
         setChanged();
         notifyObservers(arg);
+        this.firstTime = false;
+        calculating = false;
     }
 }

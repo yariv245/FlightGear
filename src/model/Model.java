@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.Observable;
+import java.util.concurrent.CompletableFuture;
 
 
 public class Model extends Observable {
@@ -71,11 +72,10 @@ public class Model extends Observable {
         try {
 
             //Check if we already created connection once
-            if (this.outClient == null) {
-                socket = new Socket(ip, port);
-                this.outClient = new PrintWriter(socket.getOutputStream());
-                this.inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            }
+
+            socket = new Socket(ip, port);
+            this.outClient = new PrintWriter(socket.getOutputStream());
+            this.inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             //Send the matrix
             for (int i = 0; i < matrix.length; i++) {
@@ -99,18 +99,37 @@ public class Model extends Observable {
 
             outClient.flush();
 
-            //Wait for response
-            String response = null;
-            while ((response = inClient.readLine()) == null) {
+            CompletableFuture.supplyAsync(() -> {
+                //Wait for response
+                String response;
+                while (true) {
+                    try {
+                        if (!((response = inClient.readLine()) == null)) break;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return response;
+            }).thenAccept(path -> {
+                //Once the response (path) is returned, notify the ViewModel
+                setChanged();
+                notifyObservers(path);
+                outClient.close();
+                try {
+                    inClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    this.inClient.close();
+                    this.socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                this.outClient.close();
+            });
 
-            }
 
-            //Mark the returned points in white
-            setChanged();
-            notifyObservers(response);
-
-//            outClient.close();
-//            socket.close();
         } catch (IOException e) {
             System.out.println("Failed!!!");
         }

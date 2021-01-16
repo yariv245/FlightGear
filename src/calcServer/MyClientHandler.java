@@ -66,7 +66,7 @@ public class MyClientHandler implements ClientHandler {
                     to = stack.pop();
                     path = path + "-" + direction(from, to);
                 }
-                System.out.println(path);
+                //Return answer to client
                 outClient.println(path);
                 stack.clear();
             }
