@@ -1,5 +1,7 @@
 package servers;
 
+import javafx.beans.property.DoubleProperty;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +10,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 public class GUIServer {
-
+    DoubleProperty airplaneX;
+    DoubleProperty airplaneY;
     private static volatile boolean stopServer;
     public static void startServer(int port) {
         new Thread(() -> runServer(port)).start();

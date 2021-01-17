@@ -20,10 +20,14 @@ public class Model extends Observable {
     public DoubleProperty airplaneX;
     public DoubleProperty airplaneY;
     PrintWriter outClientInterpreterServer = null;
+    Socket socketGuiServer;
+    BufferedReader inFromGuiServer;
 
     private volatile boolean stopClientInterpreterServer;
 
-    public Model (){
+    public Model() {
+        socketGuiServer= new Socket();
+//        inFromGuiServer = new BufferedReader();
         airplaneX = new SimpleDoubleProperty();
         airplaneY = new SimpleDoubleProperty();
     }
@@ -74,14 +78,14 @@ public class Model extends Observable {
         sentToInterpreterServer(initial);
     }
 
-    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) throws IOException {
+    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) throws IOException {
         try {
-
             //Check if we already created connection once
-
-            socketCalcPath = new Socket(ip, port);
-            this.outClientCalcServer = new PrintWriter(socketCalcPath.getOutputStream());
-            this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
+            if (this.socketCalcPath == null) {
+                socketCalcPath = new Socket(ip, port);
+                this.outClientCalcServer = new PrintWriter(socketCalcPath.getOutputStream());
+                this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
+            }
 
             //Send the matrix
             for (int[] ints : matrix) {
@@ -96,9 +100,10 @@ public class Model extends Observable {
             outClientCalcServer.println("end");
 
             //Send the airplane position
-            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
+//            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
 //            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
             outClientCalcServer.println(0 + "," + 0);
+
 //            Send the target position
 //            outClientCalcServer.println(3+","+3);
             outClientCalcServer.println((int) targetY + "," + (int) targetX);
@@ -143,8 +148,8 @@ public class Model extends Observable {
 
     private Pair<Integer, Integer> calcPositions(double x, double y) {
         int lng, lat;
-        lng = (int) (Math.abs(Math.abs(x) - 21.443738) * scale.get());
-        lat = (int) (Math.abs(Math.abs(y) - 158.020959) * scale.get());
+        lat = (int) (Math.abs(Math.abs(x) - 21.443738) * scale.get());
+        lng = (int) (Math.abs(Math.abs(y) - 158.020959) * scale.get());
         Pair<Integer, Integer> positions = new Pair<>(lng, lat);
         return positions;
     }

@@ -47,8 +47,6 @@ public class ViewModelSimulator extends Observable implements Observer {
         model.scale.bindBidirectional(this.scale);
         this.model.addObserver(this);
         //bind airplane variables to model airplane variables
-        this.airplaneX.bind(this.model.airplaneX);
-        this.airplaneY.bind(this.model.airplaneY);
 
     }
     //When "Connect" is pressed
@@ -67,7 +65,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         if(ip.equals("localhost"))
             ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
-        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), airplaneX.get(), airplaneY.get());
+        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get());
     }
 
     public void joystickMovement() {
@@ -118,6 +116,7 @@ public class ViewModelSimulator extends Observable implements Observer {
 
         mapDisplayer.setOnMouseClicked(arg0 -> {
             if(!calculating) {
+                // place in matrix
                 targetX.setValue(arg0.getX() / 1.0688259109311740890688);
                 targetY.setValue(arg0.getY() / 1.546052631578947368421);
                 if (!firstTime) {
