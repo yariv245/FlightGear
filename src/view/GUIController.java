@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
-public class SimulatorController implements Observer {
+public class GUIController implements Observer {
 
     ViewModelSimulator viewModelSimulator;
     @FXML

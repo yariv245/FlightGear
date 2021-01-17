@@ -6,8 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
-import servers.Simulator;
-import view.SimulatorController;
+import servers.GUIServer;
+import view.GUIController;
 import viewModel.ViewModelSimulator;
 
 public class MainGUI extends Application {
@@ -15,9 +15,9 @@ public class MainGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Simulator.startServer(5400); // start Simulator server
+        GUIServer.startServer(5400); // start Simulator server
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/simulator.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/GUI.fxml"));
         Parent root = loader.load();
         primaryStage.setTitle("Flight simulator gear");
         primaryStage.setScene(new Scene(root));
@@ -25,8 +25,8 @@ public class MainGUI extends Application {
 
         Model model = new Model();
         ViewModelSimulator viewModelSimulator = new ViewModelSimulator(model);
-        SimulatorController simulatorController = loader.getController();
-        simulatorController.setViewModelSimulator(viewModelSimulator);
+        GUIController GUIController = loader.getController();
+        GUIController.setViewModelSimulator(viewModelSimulator);
 
     }
 

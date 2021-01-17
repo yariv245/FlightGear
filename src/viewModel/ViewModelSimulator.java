@@ -46,17 +46,21 @@ public class ViewModelSimulator extends Observable implements Observer {
         server_port = new SimpleStringProperty();
         model.scale.bindBidirectional(this.scale);
         this.model.addObserver(this);
+        //bind airplane variables to model airplane variables
+        this.airplaneX.bind(this.model.airplaneX);
+        this.airplaneY.bind(this.model.airplaneY);
+
     }
-    //When Connect is pressed
+    //When "Connect" is pressed
     public void client_connect() {
         //connect the GUI to MyInterpreter server
         String ip = server_ip.getValue();
         if(ip.equals("localhost"))
             ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
-        model.connectToServer(ip, port);
+        model.connectToInterpreterServer(ip, port);
     }
-    //When Calculate path is pressed
+    //When "Calculate Path" is pressed
     public void calc_path(int[][] matrix) throws IOException {
         //connect the GUI to calcPath server
         String ip = server_ip.getValue();
@@ -79,7 +83,7 @@ public class ViewModelSimulator extends Observable implements Observer {
     }
 
     public void load_data(MapDisplayer mapDisplayer) throws IOException {
-        List<String[]> r = null;
+        List<String[]> csvMapData = null;
         FileChooser fileChooser = new FileChooser();
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         fileChooser.setInitialDirectory(new File(currentPath+"/src/resources"));
@@ -89,24 +93,24 @@ public class ViewModelSimulator extends Observable implements Observer {
             pathFile = file.getPath();
 
         try (CSVReader reader = new CSVReader(new FileReader(pathFile))) {
-            r = reader.readAll();
+            csvMapData = reader.readAll();
         } catch (CsvException e) {
             e.printStackTrace();
         }
 
-        int[][] csvAsInt = new int[r.size() - 2][];
+        int[][] csvAsInt = new int[csvMapData.size() - 2][];
 
-        airplaneX.setValue(Double.parseDouble(r.get(0)[0]));
-        airplaneY.setValue(Double.parseDouble(r.get(0)[1]));
+        airplaneX.setValue(Double.parseDouble(csvMapData.get(0)[0]));
+        airplaneY.setValue(Double.parseDouble(csvMapData.get(0)[1]));
 
-        scale.setValue(Double.parseDouble(r.get(1)[0]));
-        System.out.println(r.size() + "," + r.get(5).length);
+        scale.setValue(Double.parseDouble(csvMapData.get(1)[0]));
+        System.out.println(csvMapData.size() + "," + csvMapData.get(5).length);
 
-        for (int i = 2; i < r.size(); i++) {
-            csvAsInt[i - 2] = new int[r.get(i).length];
+        for (int i = 2; i < csvMapData.size(); i++) {
+            csvAsInt[i - 2] = new int[csvMapData.get(i).length];
 
-            for (int j = 0; j < r.get(i).length; j++)
-                csvAsInt[i - 2][j] = Integer.parseInt(r.get(i)[j]);
+            for (int j = 0; j < csvMapData.get(i).length; j++)
+                csvAsInt[i - 2][j] = Integer.parseInt(csvMapData.get(i)[j]);
         }
 
 //        for (int i = 0; i < csvAsInt.length; i++) TODO:remove this if not necessary

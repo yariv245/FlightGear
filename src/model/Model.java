@@ -3,7 +3,6 @@ package model;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Pair;
-import servers.Simulator;
 
 import java.io.*;
 import java.net.Socket;
@@ -12,16 +11,21 @@ import java.util.concurrent.CompletableFuture;
 
 
 public class Model extends Observable {
-
     //Here we have to implement the calculations and functions
+
     public DoubleProperty scale = new SimpleDoubleProperty();
-    PrintWriter outClient = null;
-    BufferedReader inClient = null;
+    PrintWriter outClientCalcServer = null;
+    BufferedReader inClientCalcServer = null;
     Socket socketCalcPath = null;
-    Socket socketInterpreter = null;
+    public DoubleProperty airplaneX;
+    public DoubleProperty airplaneY;
+    PrintWriter outClientInterpreterServer = null;
+
+    private volatile boolean stopClientInterpreterServer;
 
     public Model (){
-
+        airplaneX = new SimpleDoubleProperty();
+        airplaneY = new SimpleDoubleProperty();
     }
 
     public void sendJoystickValToSim(double joystickValX, double joystickValY) {
@@ -32,26 +36,26 @@ public class Model extends Observable {
                 "aileron = " + aileron,
                 "elevator = " + elevator
         };
-//        Simulator.sentToServer(move);
+        sentToInterpreterServer(move);
     }
 
     public void rudderChange(double rudderVal) {
         String[] move = {
                 "rudder = " + rudderVal
         };
-//        Simulator.sentToServer(move);
+        sentToInterpreterServer(move);
     }
 
     public void throttleChange(double throttleVal) {
         String[] move = {
                 "throttle = " + throttleVal
         };
-//        Simulator.sentToServer(move);
+        sentToInterpreterServer(move);
     }
 
-    public void connectToServer(String ip, int port) {
+    public void connectToInterpreterServer(String ip, int port) {
         //connect the GUI to MyInterpreter server
-        Simulator.startClient(ip, port); // TODO:Need to check when it finish
+        startClientInterpreterServer(ip, port); // TODO:Need to check when it finish
         String[] initial = {
                 "var aileron",
                 "var elevator",
@@ -67,7 +71,7 @@ public class Model extends Observable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        Simulator.sentToServer(initial);
+        sentToInterpreterServer(initial);
     }
 
     public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) throws IOException {
@@ -76,37 +80,37 @@ public class Model extends Observable {
             //Check if we already created connection once
 
             socketCalcPath = new Socket(ip, port);
-            this.outClient = new PrintWriter(socketCalcPath.getOutputStream());
-            this.inClient = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
+            this.outClientCalcServer = new PrintWriter(socketCalcPath.getOutputStream());
+            this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
 
             //Send the matrix
-            for (int i = 0; i < matrix.length; i++) {
+            for (int[] ints : matrix) {
                 StringBuilder line = new StringBuilder();
-                for (int j = 0; j < matrix[i].length; j++) {
-                    line.append(matrix[i][j] + ",");
+                for (int anInt : ints) {
+                    line.append(anInt).append(",");
                 }
                 line.deleteCharAt(line.length() - 1);
-                outClient.println(line);
-                outClient.flush();
+                outClientCalcServer.println(line);
+                outClientCalcServer.flush();
             }
-            outClient.println("end");
+            outClientCalcServer.println("end");
 
             //Send the airplane position
             Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
-//            outClient.println(airplanePositions.getKey()+","+airplanePositions.getValue());
-            outClient.println(0 + "," + 0);
+//            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
+            outClientCalcServer.println(0 + "," + 0);
 //            Send the target position
-//            outClient.println(3+","+3);
-            outClient.println((int) targetY + "," + (int) targetX);
+//            outClientCalcServer.println(3+","+3);
+            outClientCalcServer.println((int) targetY + "," + (int) targetX);
 
-            outClient.flush();
+            outClientCalcServer.flush();
 
             CompletableFuture.supplyAsync(() -> {
                 //Wait for response
                 String response;
                 while (true) {
                     try {
-                        if (!((response = inClient.readLine()) == null)) break;
+                        if (!((response = inClientCalcServer.readLine()) == null)) break;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -116,19 +120,19 @@ public class Model extends Observable {
                 //Once the response (path) is returned, notify the ViewModel
                 setChanged();
                 notifyObservers(path);
-                outClient.close();
+                outClientCalcServer.close();
                 try {
-                    inClient.close();
+                    inClientCalcServer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 try {
-                    this.inClient.close();
+                    this.inClientCalcServer.close();
                     this.socketCalcPath.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                this.outClient.close();
+                this.outClientCalcServer.close();
             });
 
 
@@ -145,5 +149,50 @@ public class Model extends Observable {
         return positions;
     }
 
+    public void startClientInterpreterServer(String ip, int port) { // start client to connect to MyInterpreter server
+        new Thread(() -> runClientInterpreterServer(ip, port)).start();
+    }
+
+    private void runClientInterpreterServer(String ip, int port) {
+        while (!stopClientInterpreterServer) {
+            try {
+                Socket interpreter = new Socket(ip, port);
+                outClientInterpreterServer = new PrintWriter(interpreter.getOutputStream());
+                while (!stopClientInterpreterServer) {
+//                    out.println(simX + "," + simY + "," + simZ);
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e1) {
+//                    }
+                }
+                outClientInterpreterServer.close();
+                interpreter.close();
+            } catch (IOException e) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                }
+            }
+        }
+    }
+
+    public void closeClientInterpreterServer() {
+        stopClientInterpreterServer = true;
+    } // close client connection to MyInterpreter server
+
+    public void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
+        if (outClientInterpreterServer == null)
+            return;
+
+        for (String line : lines) {
+            outClientInterpreterServer.println(line);
+            outClientInterpreterServer.flush();
+//            try {
+//                Thread.sleep(100);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        }
+    }
 }
 

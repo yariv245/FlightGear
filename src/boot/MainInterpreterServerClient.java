@@ -1,7 +1,6 @@
 package boot;
 
 import servers.MyInterpreter;
-import servers.Simulator;
 
 import java.io.IOException;
 

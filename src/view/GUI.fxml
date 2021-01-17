@@ -13,7 +13,7 @@
 
 <?import view.MapDisplayer?>
 <AnchorPane prefHeight="350.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SimulatorController" >
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GUIController" >
     <children>
         <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="59.0" prefWidth="266.0" spacing="15.0">
             <children>
