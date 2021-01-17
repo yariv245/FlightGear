@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
+import servers.Simulator;
 import view.SimulatorController;
 import viewModel.ViewModelSimulator;
 
@@ -14,6 +15,7 @@ public class MainGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Simulator.startServer(5400); // start Simulator server
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/simulator.fxml"));
         Parent root = loader.load();

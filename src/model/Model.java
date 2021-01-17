@@ -1,13 +1,10 @@
 package model;
 
-import calcServer.MyClientHandler;
-import calcServer.MySerialServer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Pair;
 import servers.Simulator;
 
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.Observable;
@@ -20,35 +17,40 @@ public class Model extends Observable {
     public DoubleProperty scale = new SimpleDoubleProperty();
     PrintWriter outClient = null;
     BufferedReader inClient = null;
-    Socket socket = null;
+    Socket socketCalcPath = null;
+    Socket socketInterpreter = null;
+
+    public Model (){
+
+    }
 
     public void sendJoystickValToSim(double joystickValX, double joystickValY) {
-        //Convert joystick values to FlightSimulator valid values
+        //Convert joystick values to FlightSimulator valid values then send it
         double aileron = (joystickValX - 651) / 80; //left-right -1 to 1 ~~~ 731 = 1 ,571 = -1
         double elevator = (joystickValY - 196) / 80; //up-down -1 to 1 ~~~ 276 = 1 ,116 = -1
         String[] move = {
                 "aileron = " + aileron,
                 "elevator = " + elevator
         };
-        Simulator.sentToServer(move);
+//        Simulator.sentToServer(move);
     }
 
     public void rudderChange(double rudderVal) {
         String[] move = {
                 "rudder = " + rudderVal
         };
-        Simulator.sentToServer(move);
+//        Simulator.sentToServer(move);
     }
 
     public void throttleChange(double throttleVal) {
         String[] move = {
                 "throttle = " + throttleVal
         };
-        Simulator.sentToServer(move);
+//        Simulator.sentToServer(move);
     }
 
     public void connectToServer(String ip, int port) {
-
+        //connect the GUI to MyInterpreter server
         Simulator.startClient(ip, port); // TODO:Need to check when it finish
         String[] initial = {
                 "var aileron",
@@ -65,7 +67,7 @@ public class Model extends Observable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Simulator.sentToServer(initial);
+//        Simulator.sentToServer(initial);
     }
 
     public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) throws IOException {
@@ -73,9 +75,9 @@ public class Model extends Observable {
 
             //Check if we already created connection once
 
-            socket = new Socket(ip, port);
-            this.outClient = new PrintWriter(socket.getOutputStream());
-            this.inClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socketCalcPath = new Socket(ip, port);
+            this.outClient = new PrintWriter(socketCalcPath.getOutputStream());
+            this.inClient = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
 
             //Send the matrix
             for (int i = 0; i < matrix.length; i++) {
@@ -122,7 +124,7 @@ public class Model extends Observable {
                 }
                 try {
                     this.inClient.close();
-                    this.socket.close();
+                    this.socketCalcPath.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

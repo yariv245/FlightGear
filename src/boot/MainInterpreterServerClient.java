@@ -11,7 +11,6 @@ public class MainInterpreterServerClient {
 
         int port = 5400;
         String ip = "127.0.0.1";
-        Simulator.startServer(port); // start Simulator server
         MyInterpreter.startServer(port +3); // port 5401
         MyInterpreter.startClient(ip,port+1); // connect interpreter to FlightGear server
 //        CalcPathServer.runServer(port+2);

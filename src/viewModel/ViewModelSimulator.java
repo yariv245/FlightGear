@@ -47,17 +47,18 @@ public class ViewModelSimulator extends Observable implements Observer {
         model.scale.bindBidirectional(this.scale);
         this.model.addObserver(this);
     }
-
+    //When Connect is pressed
     public void client_connect() {
-        //do the actual connection by connect command
+        //connect the GUI to MyInterpreter server
         String ip = server_ip.getValue();
         if(ip.equals("localhost"))
             ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
         model.connectToServer(ip, port);
     }
-
+    //When Calculate path is pressed
     public void calc_path(int[][] matrix) throws IOException {
+        //connect the GUI to calcPath server
         String ip = server_ip.getValue();
         if(ip.equals("localhost"))
             ip = "127.0.0.1";

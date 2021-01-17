@@ -36,18 +36,6 @@ public class Simulator {
         }
     }
 
-    public static void sentToServer(String line) {
-        if (outClient == null)
-            return;
-        outClient.println(line);
-        outClient.flush();
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static void runClient(String ip, int port) {
         while (!stop) {
             try {
@@ -73,8 +61,6 @@ public class Simulator {
 
     private static void runServer(int port) {
         try {
-            double aileron = 0;
-            double elevator = 0;
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
             System.out.print("Simulator server: Waiting for clients\n");
@@ -84,10 +70,12 @@ public class Simulator {
                     Socket client = server.accept();
                     System.out.println("Simulator server: Client Connected");
                     BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    String line = null;
+                    String line;
                     while (!(line = in.readLine()).equals("bye")) {
                         try {
                             System.out.println("Simulator server: " + line);
+                            //Send line to model
+
 //                            if (line.startsWith("set simX"))
 //                                simX = Double.parseDouble(line.split(" ")[2]);
                         } catch (NumberFormatException e) {
