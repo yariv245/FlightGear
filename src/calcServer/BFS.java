@@ -33,7 +33,7 @@ public class BFS<Problem> extends CommonSearcher<Problem> {
                 } else if (state.getTotalCost() > state.getCost() + n.getTotalCost()) {
                     state.setTotalCost(state.getCost() + n.getTotalCost());
                     state.setCameFrom(n);
-                    if (openList.contains(state)) {
+                    if (!openList.contains(state)) {
                         openList.add(state);
                     } else {// Update priority queue
                         State<Problem> x = popOpenList();

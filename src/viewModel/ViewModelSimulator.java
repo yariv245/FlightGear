@@ -12,6 +12,7 @@ import model.Model;
 import view.MapDisplayer;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class ViewModelSimulator extends Observable implements Observer {
@@ -50,12 +51,16 @@ public class ViewModelSimulator extends Observable implements Observer {
     public void client_connect() {
         //do the actual connection by connect command
         String ip = server_ip.getValue();
+        if(ip.equals("localhost"))
+            ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
         model.connectToServer(ip, port);
     }
 
     public void calc_path(int[][] matrix) throws IOException {
         String ip = server_ip.getValue();
+        if(ip.equals("localhost"))
+            ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
         model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), airplaneX.get(), airplaneY.get());
     }
@@ -75,6 +80,8 @@ public class ViewModelSimulator extends Observable implements Observer {
     public void load_data(MapDisplayer mapDisplayer) throws IOException {
         List<String[]> r = null;
         FileChooser fileChooser = new FileChooser();
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        fileChooser.setInitialDirectory(new File(currentPath+"/src/resources"));
         File file = fileChooser.showOpenDialog(new Stage());
         String pathFile = null;
         if (file != null)
