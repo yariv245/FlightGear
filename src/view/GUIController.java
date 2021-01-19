@@ -43,6 +43,9 @@ public class GUIController implements Observer {
     DoubleProperty joystickValX = new SimpleDoubleProperty();
     DoubleProperty joystickValY = new SimpleDoubleProperty();
 
+    public DoubleProperty airplaneX = new SimpleDoubleProperty();//Todo: bind this prop to realtime airplane pos
+    public DoubleProperty airplaneY = new SimpleDoubleProperty();
+
     Stage primaryStage;
 
     @FXML
@@ -85,6 +88,9 @@ public class GUIController implements Observer {
         viewModelSimulator.throttleVal.bind(throttle_slider.valueProperty());
         viewModelSimulator.rudderVal.bind(rudder_slider.valueProperty());
         this.viewModelSimulator.addObserver(this);
+
+        this.airplaneX.bind(viewModelSimulator.airplaneX);
+        this.airplaneY.bind(viewModelSimulator.airplaneY);
     }
 
     public void rudderChange(){

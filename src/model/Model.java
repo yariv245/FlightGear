@@ -2,34 +2,43 @@ package model;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.util.Pair;
+import servers.MyInterpreter;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
 
 
 public class Model extends Observable {
-    //Here we have to implement the calculations and functions
 
-    public DoubleProperty scale = new SimpleDoubleProperty();
-    PrintWriter outClientCalcServer = null;
-    BufferedReader inClientCalcServer = null;
-    Socket socketCalcPath = null;
-    public DoubleProperty airplaneX;
-    public DoubleProperty airplaneY;
-    PrintWriter outClientInterpreterServer = null;
-    Socket socketGuiServer;
-    BufferedReader inFromGuiServer;
+    //CalcPath server variables
+    Socket socketCalcServer;
+    PrintWriter outClientCalcServer;
+    BufferedReader inClientCalcServer;
 
-    private volatile boolean stopClientInterpreterServer;
+    //Interpreter server variables
+    Socket socketInterpreter;
+    PrintWriter outInterpreter;
+    BufferedReader inInterpreter;
+    private volatile boolean stopClientInterpreter = false;
+    private volatile boolean stopServerInterpreter = false;
+    double airplaneX;
+    double airplaneY;
+    //Represent the row and col in MapDisplayer.mapData
+
+    public DoubleProperty scale;
 
     public Model() {
-        socketGuiServer= new Socket();
-//        inFromGuiServer = new BufferedReader();
-        airplaneX = new SimpleDoubleProperty();
-        airplaneY = new SimpleDoubleProperty();
+        scale = new SimpleDoubleProperty();
+        startServerInterpreter(5404);
     }
 
     public void sendJoystickValToSim(double joystickValX, double joystickValY) {
@@ -59,7 +68,7 @@ public class Model extends Observable {
 
     public void connectToInterpreterServer(String ip, int port) {
         //connect the GUI to MyInterpreter server
-        startClientInterpreterServer(ip, port); // TODO:Need to check when it finish
+        startClientInterpreter(ip, port); // TODO:Need to check when it finish
         String[] initial = {
                 "var aileron",
                 "var elevator",
@@ -81,10 +90,10 @@ public class Model extends Observable {
     public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) throws IOException {
         try {
             //Check if we already created connection once
-            if (this.socketCalcPath == null) {
-                socketCalcPath = new Socket(ip, port);
-                this.outClientCalcServer = new PrintWriter(socketCalcPath.getOutputStream());
-                this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcPath.getInputStream()));
+            if (this.socketCalcServer == null) {
+                socketCalcServer = new Socket(ip, port);
+                this.outClientCalcServer = new PrintWriter(socketCalcServer.getOutputStream());
+                this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcServer.getInputStream()));
             }
 
             //Send the matrix
@@ -133,7 +142,7 @@ public class Model extends Observable {
                 }
                 try {
                     this.inClientCalcServer.close();
-                    this.socketCalcPath.close();
+                    this.socketCalcServer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -154,24 +163,20 @@ public class Model extends Observable {
         return positions;
     }
 
-    public void startClientInterpreterServer(String ip, int port) { // start client to connect to MyInterpreter server
-        new Thread(() -> runClientInterpreterServer(ip, port)).start();
+    public void startClientInterpreter(String ip, int port) { // start client to connect to MyInterpreter server
+        new Thread(() -> runClientInterpreter(ip, port)).start();
     }
 
-    private void runClientInterpreterServer(String ip, int port) {
-        while (!stopClientInterpreterServer) {
+    private void runClientInterpreter(String ip, int port) {
+        while (!stopClientInterpreter) {
             try {
-                Socket interpreter = new Socket(ip, port);
-                outClientInterpreterServer = new PrintWriter(interpreter.getOutputStream());
-                while (!stopClientInterpreterServer) {
-//                    out.println(simX + "," + simY + "," + simZ);
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e1) {
-//                    }
+                socketInterpreter = new Socket(ip, port);
+                outInterpreter = new PrintWriter(socketInterpreter.getOutputStream());
+                while (!stopClientInterpreter) {
+
                 }
-                outClientInterpreterServer.close();
-                interpreter.close();
+//                outInterpreter.close();
+//                socketInterpreter.close();
             } catch (IOException e) {
                 try {
                     Thread.sleep(1000);
@@ -182,21 +187,75 @@ public class Model extends Observable {
     }
 
     public void closeClientInterpreterServer() {
-        stopClientInterpreterServer = true;
-    } // close client connection to MyInterpreter server
+        stopClientInterpreter = true;
+    }
 
-    public void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
-        if (outClientInterpreterServer == null)
+    public void startServerInterpreter(int port) { // start client to connect to MyInterpreter server
+        new Thread(() -> runServerInterpreter(port)).start();
+//        new RunServerService(port).start();
+    }
+
+    private void runServerInterpreter(int port) {
+        try {
+            ServerSocket server = new ServerSocket(port);
+            server.setSoTimeout(1000);
+            System.out.print("Gui server Thread: Waiting for interpreter\n");
+            while (!stopServerInterpreter) {
+                try {
+                    System.out.print(".");
+                    Socket socket = server.accept();
+                    System.out.println("Gui server Thread: interpreter Connected");
+                    inInterpreter = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String line;
+                    System.out.println("Before while");
+                        while (!(line = inInterpreter.readLine()).equals("bye")) {
+                            System.out.println("Gui server received: " + line);
+                        }
+                    System.out.println("After while");
+                    System.out.println("MyInterpreter server: Client DisConnected");
+                    inInterpreter.close();
+                    socket.close();
+                } catch (SocketTimeoutException e) {
+                    e.printStackTrace();
+                }
+            }
+            server.close();
+        } catch (IOException e) {
+        }
+
+    }
+
+    class RunServerService extends Service {
+
+        int port=0;
+        public RunServerService(int port) {
+            this.port = port;
+            setOnSucceeded((EventHandler<WorkerStateEvent>) workerStateEvent -> {
+                System.out.println("Succeed");
+            });
+
+        }
+
+
+        @Override
+        protected Task createTask() {
+            return new Task() {
+                @Override
+                protected Object call() throws Exception {
+                    runServerInterpreter(port);
+                    return null;
+                }
+            };
+        }
+    }
+
+    public synchronized void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
+        if (outInterpreter == null)
             return;
 
         for (String line : lines) {
-            outClientInterpreterServer.println(line);
-            outClientInterpreterServer.flush();
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            outInterpreter.println(line);
+            outInterpreter.flush();
         }
     }
 }

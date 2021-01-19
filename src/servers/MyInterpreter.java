@@ -13,7 +13,8 @@ import commands.*;
 
 public class MyInterpreter {
     private static volatile boolean stop;
-    private static PrintWriter outClient = null;
+    private static PrintWriter outClientFlightGear;
+    private static PrintWriter outClientGui;
     private static boolean isRun = false;
     static final Map<String, Command> commandsMap = createCommandMap();
 
@@ -37,7 +38,8 @@ public class MyInterpreter {
         map.put("simElevator", new Var(0, "/controls/flight/elevator"));
         map.put("simRudder", new Var(0, "/controls/flight/rudder"));
         map.put("simThrottle", new Var(0, "/controls/engines/current-engine/throttle"));
-
+        map.put("simAirplaneX", new Var(0, "simAirplaneX"));
+        map.put("simAirplaneY", new Var(0, "simAirplaneY"));
         return map;
     }
 
@@ -74,7 +76,6 @@ public class MyInterpreter {
         return words;
     }
 
-    // TODO : Not sure if VOID
     public static int parser(ArrayList<String> command) {
         int result = 0;
         Command c = commandsMap.get(command.get(0));
@@ -103,27 +104,24 @@ public class MyInterpreter {
     }
 
     public static void startClient(String ip, int port) {
-        new Thread(() -> runClient(ip, port)).start();
+        new Thread(() -> runClientFlightGear(ip, port)).start(); //Send data to Flightgear port:5401
+        new Thread(() -> runClientGui(ip, port + 3)).start(); //Send data to Gui port:5404
     }
 
     public static void startServer(int port) {
-        new Thread(() -> runServer(port)).start();
+        new Thread(() -> runServerFlightGear(port)).start(); // receive data from Flightgear port:5400
+        new Thread(() -> runServerGui(port + 3)).start(); // receive data from GUI port:5403
     }
 
-    private static void runClient(String ip, int port) {
+    private static void runClientFlightGear(String ip, int port) {
         while (!stop) {
             try {
                 Socket interpreter = new Socket(ip, port);
-                outClient = new PrintWriter(interpreter.getOutputStream());
+                outClientFlightGear = new PrintWriter(interpreter.getOutputStream());
                 while (!stop) {
-//                    out.println(simX + "," + simY + "," + simZ);
-//                    outClient.flush();
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e1) {
-//                    }
+
                 }
-                outClient.close();
+                outClientFlightGear.close();
                 interpreter.close();
             } catch (IOException e) {
                 try {
@@ -134,33 +132,77 @@ public class MyInterpreter {
         }
     }
 
-    private static void runServer(int port) {
+    private static void runClientGui(String ip, int port) {
+        while (!stop) {
+            try {
+                Socket interpreter = new Socket(ip, port);
+                outClientGui = new PrintWriter(interpreter.getOutputStream());
+                while (!stop) {
+                }
+                outClientFlightGear.close();
+                interpreter.close();
+            } catch (IOException e) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e1) {
+                }
+            }
+        }
+    }
+
+    private static void runServerGui(int port) {
         try {
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
-            Queue<String> Qlines = new ArrayDeque<>();
             String[] lines = new String[1];
-            System.out.print("MyInterpreter server: Waiting for clients\n");
+            System.out.print("Interpreter server Gui: Waiting for clients\n");
             while (!stop) {
                 try {
                     System.out.print(".");
-                    Socket client = server.accept();
-                    System.out.println("MyInterpreter server: Client Connected");
-                    BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    String line = null;
-                    while (!(line = in.readLine()).equals("bye")) {
-                        try {
-//                            System.out.println("Interpreter server: " + line);
-                            lines[0] = line;
-                            MyInterpreter.interpret(lines);
+                    Socket socket = server.accept();
+                    System.out.println("Interpreter server Gui: Client Connected");
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String line;
 
-//                            if (line.startsWith("set simX"))
-//                                simX = Double.parseDouble(line.split(" ")[2]);
-                        } catch (NumberFormatException e) {
-                        }
+                    while (!(line = in.readLine()).equals("bye")) {
+                        lines[0] = line;
+                        MyInterpreter.interpret(lines); // interpret msg from GUI
+                        System.out.println("Gui sent message");
+                    }
+
+                    in.close();
+                    socket.close();
+                    System.out.println("MyInterpreter server: Client DisConnected");
+                } catch (SocketTimeoutException e) {
+                }
+            }
+            server.close();
+        } catch (IOException e) {
+        }
+    }
+
+    private static void runServerFlightGear(int port) {
+        try {
+            ServerSocket server = new ServerSocket(port);
+            server.setSoTimeout(1000);
+            String[] initial = {"var airplaneX = bind simAirplaneX","var airplaneY = bind simAirplaneY"};
+            System.out.print("Interpreter server flightgear: Waiting for clients\n");
+            MyInterpreter.interpret(initial);
+            while (!stop) {
+                try {
+                    System.out.print(".");
+                    Socket socket = server.accept();
+                    System.out.println("Interpreter server flightgear: Client Connected");
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String line;
+                    while (!(line = in.readLine()).equals("bye")) {
+                        String[] data = line.split(",");
+                        String[] dataToInterpret = {"airplaneY = " + data[data.length - 2],"airplaneX = " + data[data.length - 1]};
+                        MyInterpreter.interpret(dataToInterpret);
+                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
                     }
                     in.close();
-                    client.close();
+                    socket.close();
                     System.out.println("MyInterpreter server: Client DisConnected");
                 } catch (SocketTimeoutException e) {
                 }
@@ -174,22 +216,19 @@ public class MyInterpreter {
         stop = true;
     }
 
-    public static void sentToServer(String[] lines) {
-        if (outClient == null)
+    public static void sendToClientFlightGear(String line) {
+        if (outClientFlightGear == null)
             return;
-        System.out.println("lines got");
-
-        for (String line : lines) {
-            outClient.println(line);
-            outClient.flush();
-        }
+        outClientFlightGear.println(line);
+        outClientFlightGear.flush();
     }
 
-    public static void sentToServer(String line) {
-        if (outClient == null)
+    public static void sendToClientGui(String line) {
+        if (outClientGui == null)
             return;
-        outClient.println(line);
-        outClient.flush();
+        outClientGui.println(line);
+        System.out.println(line);
+        outClientGui.flush();
     }
 
 }

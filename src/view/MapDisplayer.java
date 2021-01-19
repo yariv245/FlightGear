@@ -19,7 +19,6 @@ public class MapDisplayer extends Canvas {
     double max_color = 255;
     double min_color = 0;
 
-
     public MapDisplayer() {
         gc = getGraphicsContext2D();
     }
@@ -95,6 +94,10 @@ public class MapDisplayer extends Canvas {
             pairsPos.add(new Pair(Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
         }
         return pairsPos;
+    }
+
+    public void drawAirplane(int x ,int y) {
+
     }
 
 }

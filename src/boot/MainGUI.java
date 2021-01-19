@@ -15,7 +15,7 @@ public class MainGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        GUIServer.startServer(5400); // start Simulator server
+//        GUIServer.startServer(5400); // start Simulator server
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/GUI.fxml"));
         Parent root = loader.load();

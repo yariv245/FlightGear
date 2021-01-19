@@ -10,8 +10,10 @@ public class MainInterpreterServerClient {
 
         int port = 5400;
         String ip = "127.0.0.1";
-        MyInterpreter.startServer(port +3); // port 5401
+//        MyInterpreter.startServer(port +3); //GUI server -  port 5401
+        MyInterpreter.startServer(port); // FlightGear live data server port - 5400
         MyInterpreter.startClient(ip,port+1); // connect interpreter to FlightGear server
+
 //        CalcPathServer.runServer(port+2);
 
 //        int port = 5400;

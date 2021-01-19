@@ -47,8 +47,8 @@ public class ViewModelSimulator extends Observable implements Observer {
         model.scale.bindBidirectional(this.scale);
         this.model.addObserver(this);
         //bind airplane variables to model airplane variables
-
     }
+
     //When "Connect" is pressed
     public void client_connect() {
         //connect the GUI to MyInterpreter server
@@ -58,6 +58,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         int port = Integer.parseInt(server_port.getValue());
         model.connectToInterpreterServer(ip, port);
     }
+
     //When "Calculate Path" is pressed
     public void calc_path(int[][] matrix) throws IOException {
         //connect the GUI to calcPath server
