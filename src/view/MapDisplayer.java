@@ -3,7 +3,6 @@ package view;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -36,19 +35,22 @@ public class MapDisplayer extends Canvas {
     }
 
     public void setMapData(int[][] mapData) {
+
         this.mapData = mapData;
 
-        //Finding the maxiumum and minimum of the elements of the matrix
-        for (int i = 0; i < mapData.length; i++)
-            for (int j = 0; j < mapData[i].length; j++) {
-                if (minElement > mapData[i][j]) {
-                    minElement = mapData[i][j];
+        //Finding the maximum and minimum of the elements of the matrix
+        for (int[] mapDatum : mapData)
+            for (int i : mapDatum) {
+                if (minElement > i) {
+                    minElement = i;
                 }
-                if (maxElement < mapData[i][j]) {
-                    maxElement = mapData[i][j];
+                if (maxElement < i) {
+                    maxElement = i;
                 }
             }
+
         this.mapPaintBase = new int[mapData.length][];
+
         //Filling the values by the CSV File values
         for (int i = 0; i < mapData.length; i++) {
             this.mapPaintBase[i] = new int[mapData[i].length];
@@ -74,14 +76,13 @@ public class MapDisplayer extends Canvas {
         //Setting the colors for each element in the matrix by his value
         for (int i = 0; i < mapPaintBase.length; i++)
             for (int j = 0; j < mapPaintBase[i].length; j++) {
-                int tmp = mapPaintBase[i][j];
                 gc.setFill(Color.rgb(255, 255, 255));
                 gc.fillRect((j * width), (i * height), width, height);
             }
         for (int i = 0; i < mapPaintBase.length; i++)
             for (int j = 0; j < mapPaintBase[i].length; j++) {
                 int tmp = mapPaintBase[i][j];
-                gc.setFill(Color.rgb((255 - tmp), (0 + tmp), 0));
+                gc.setFill(Color.rgb((255 - tmp), tmp, 0));
                 gc.fillRect((j * width), (i * height), width, height);
             }
     }
@@ -109,20 +110,13 @@ public class MapDisplayer extends Canvas {
     }
 
     public void drawAirplane(String[] data) {
-//        double H = airplane.getHeight();
-//        double W = airplane.getWidth();
-//        double h = H / mapData.length;
-//        double w = W / mapData[0].length;
-//        GraphicsContext gc = airplane.getGraphicsContext2D();
-//        lastX=airplaneX.getValue();
-//        lastY=airplaneY.getValue()*-1;
-//        gc.clearRect(0,0,W,H);
 
         double heading = Double.parseDouble(data[2]);
-        Pair<Double,Double> pair = calcPositions(Double.parseDouble(data[0]),Double.parseDouble(data[1]));
-        double x = pair.getKey();
-        double y = pair.getValue();
+        Pair<Double, Double> positions = calcPositions(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+        double x = positions.getKey();
+        double y = positions.getValue();
 
+        //Draw image depend on the airplane heading value
         if (heading >= 0 && heading < 39)
             gc.drawImage(images.get(0), x, y, 25, 25);
         if (heading >= 39 && heading < 80)
@@ -144,12 +138,9 @@ public class MapDisplayer extends Canvas {
 
     private Pair<Double, Double> calcPositions(double x, double y) {
         double lng, lat;
-        lat = Math.abs( (Math.abs(Math.abs(x) - 21.443738) * 0.01652));
-        lng = Math.abs( (Math.abs(Math.abs(y) - 158.020959) * 0.01652));
-        Pair<Double, Double> positions = new Pair<>(lng, lat);
-        return positions;
+        lat = Math.abs((Math.abs(Math.abs(x) - 21.443738) * 0.01652));
+        lng = Math.abs((Math.abs(Math.abs(y) - 158.020959) * 0.01652));
+        return new Pair<>(lng, lat);
     }
-
-
 
 }
