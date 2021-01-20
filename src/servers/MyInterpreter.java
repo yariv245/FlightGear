@@ -38,8 +38,10 @@ public class MyInterpreter {
         map.put("simElevator", new Var(0, "/controls/flight/elevator"));
         map.put("simRudder", new Var(0, "/controls/flight/rudder"));
         map.put("simThrottle", new Var(0, "/controls/engines/current-engine/throttle"));
-        map.put("simAirplaneX", new Var(0, "simAirplaneX"));
-        map.put("simAirplaneY", new Var(0, "simAirplaneY"));
+        map.put("simAirplaneX", new Var(0, "client_airplaneX"));
+        map.put("simAirplaneY", new Var(0, "client_airplaneY"));
+        map.put("simHeading", new Var(0, "client_heading"));
+
         return map;
     }
 
@@ -199,7 +201,7 @@ public class MyInterpreter {
                         String[] data = line.split(",");
                         String[] dataToInterpret = {"airplaneY = " + data[data.length - 2],"airplaneX = " + data[data.length - 1]};
                         MyInterpreter.interpret(dataToInterpret);
-                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
+//                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
                     }
                     in.close();
                     socket.close();

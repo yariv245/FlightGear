@@ -45,7 +45,8 @@ public class Var extends Observable implements Observer {
                     msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
                     MyInterpreter.sendToClientFlightGear(msg); // send to server the message to change the parameter
                 }else{
-                    msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
+                    //msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
+                    msg = MyInterpreter.getSymbolTable("simAirplaneX").getValue()+"," + MyInterpreter.getSymbolTable("simAirplaneY").getValue()+","+ MyInterpreter.getSymbolTable("simHeading").getValue();
                     MyInterpreter.sendToClientGui(msg); // send to server the message to change the parameter
                 }
             }

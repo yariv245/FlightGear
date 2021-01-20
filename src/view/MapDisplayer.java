@@ -1,12 +1,14 @@
 package view;
 
-import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MapDisplayer extends Canvas {
 
@@ -18,8 +20,18 @@ public class MapDisplayer extends Canvas {
     double height, width, WidthCanvas, HeightCanvas;
     double max_color = 255;
     double min_color = 0;
+    HashMap<Integer, Image> images;
 
     public MapDisplayer() {
+        images = new HashMap<>();
+        images.put(0, new Image("./resources/plane0.png", 25, 25, false, false));
+        images.put(45, new Image("./resources/plane45.png", 25, 25, false, false));
+        images.put(90, new Image("./resources/plane90.png", 25, 25, false, false));
+        images.put(135, new Image("./resources/plane135.png", 25, 25, false, false));
+        images.put(180, new Image("./resources/plane180.png", 25, 25, false, false));
+        images.put(225, new Image("./resources/plane225.png", 25, 25, false, false));
+        images.put(270, new Image("./resources/plane270.png", 25, 25, false, false));
+        images.put(315, new Image("./resources/plane315.png", 25, 25, false, false));
         gc = getGraphicsContext2D();
     }
 
@@ -54,8 +66,8 @@ public class MapDisplayer extends Canvas {
 
 
         reDraw();
+        this.drawAirplane(new String[]{"21.308333", "-157.930417", "90.0"});
     }
-
 
     public void reDraw() {
 
@@ -90,14 +102,54 @@ public class MapDisplayer extends Canvas {
 
         for (String pos : stringPosList) //Convert the x1,y1 to Pair(int1 ,int2)
         {
-            String[] nums= pos.split(","); // convert string: "x1,y1" to array = {"x1","y1"}
+            String[] nums = pos.split(","); // convert string: "x1,y1" to array = {"x1","y1"}
             pairsPos.add(new Pair(Integer.parseInt(nums[0]), Integer.parseInt(nums[1])));
         }
         return pairsPos;
     }
 
-    public void drawAirplane(int x ,int y) {
+    public void drawAirplane(String[] data) {
+//        double H = airplane.getHeight();
+//        double W = airplane.getWidth();
+//        double h = H / mapData.length;
+//        double w = W / mapData[0].length;
+//        GraphicsContext gc = airplane.getGraphicsContext2D();
+//        lastX=airplaneX.getValue();
+//        lastY=airplaneY.getValue()*-1;
+//        gc.clearRect(0,0,W,H);
+
+        double heading = Double.parseDouble(data[2]);
+        Pair<Double,Double> pair = calcPositions(Double.parseDouble(data[0]),Double.parseDouble(data[1]));
+        double x = pair.getKey();
+        double y = pair.getValue();
+
+        if (heading >= 0 && heading < 39)
+            gc.drawImage(images.get(0), x, y, 25, 25);
+        if (heading >= 39 && heading < 80)
+            gc.drawImage(images.get(45), x, y, 25, 25);
+        if (heading >= 80 && heading < 129)
+            gc.drawImage(images.get(90), x, y, 25, 25);
+        if (heading >= 129 && heading < 170)
+            gc.drawImage(images.get(135), x, y, 25, 25);
+        if (heading >= 170 && heading < 219)
+            gc.drawImage(images.get(180), x, y, 25, 25);
+        if (heading >= 219 && heading < 260)
+            gc.drawImage(images.get(225), x, y, 25, 25);
+        if (heading >= 260 && heading < 309)
+            gc.drawImage(images.get(270), x, y, 25, 25);
+        if (heading >= 309)
+            gc.drawImage(images.get(315), x, y, 25, 25);
 
     }
+
+    private Pair<Double, Double> calcPositions(double x, double y) {
+        double lng, lat;
+        lat = Math.abs( (Math.abs(Math.abs(x) - 21.443738) * 0.01652));
+        lng = Math.abs( (Math.abs(Math.abs(y) - 158.020959) * 0.01652));
+        Pair<Double, Double> positions = new Pair<>(lng, lat);
+        return positions;
+    }
+
+
 
 }

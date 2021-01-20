@@ -207,11 +207,14 @@ public class Model extends Observable {
                     System.out.println("Gui server Thread: interpreter Connected");
                     inInterpreter = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String line;
-                    System.out.println("Before while");
-                        while (!(line = inInterpreter.readLine()).equals("bye")) {
-                            System.out.println("Gui server received: " + line);
-                        }
-                    System.out.println("After while");
+                    String[] lineSeperated;
+                    while (!(line = inInterpreter.readLine()).equals("bye")) {
+                        // xVal,yVal,headingVal
+                        lineSeperated = line.split(",");
+                        setChanged();
+                        notifyObservers(lineSeperated);
+                        System.out.println("Gui server received: " + line);
+                    }
                     System.out.println("MyInterpreter server: Client DisConnected");
                     inInterpreter.close();
                     socket.close();
@@ -225,29 +228,6 @@ public class Model extends Observable {
 
     }
 
-    class RunServerService extends Service {
-
-        int port=0;
-        public RunServerService(int port) {
-            this.port = port;
-            setOnSucceeded((EventHandler<WorkerStateEvent>) workerStateEvent -> {
-                System.out.println("Succeed");
-            });
-
-        }
-
-
-        @Override
-        protected Task createTask() {
-            return new Task() {
-                @Override
-                protected Object call() throws Exception {
-                    runServerInterpreter(port);
-                    return null;
-                }
-            };
-        }
-    }
 
     public synchronized void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
         if (outInterpreter == null)

@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import viewModel.ViewModelSimulator;
+
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -55,7 +56,7 @@ public class GUIController implements Observer {
         throttle_slider.valueProperty().addListener((observableValue, number, t1) -> throttleChange());
     }
 
-    public void initializeJoystick(){
+    public void initializeJoystick() {
         joystickValX.bind(joystick.layoutXProperty());
         joystickValY.bind(joystick.layoutYProperty());
         joystick.setOnMouseDragged(mouseEvent -> {
@@ -93,11 +94,11 @@ public class GUIController implements Observer {
         this.airplaneY.bind(viewModelSimulator.airplaneY);
     }
 
-    public void rudderChange(){
+    public void rudderChange() {
         viewModelSimulator.rudderChange();
     }
 
-    public void throttleChange(){
+    public void throttleChange() {
         viewModelSimulator.throttleChange();
     }
 
@@ -105,7 +106,7 @@ public class GUIController implements Observer {
         connect_popup(); // function to open the connect popup
         connectBtn.setOnAction(actionEvent -> { // set handler to connect button for client connection
             viewModelSimulator.client_connect();
-            if(primaryStage!=null)
+            if (primaryStage != null)
                 primaryStage.close();
         });
     }
@@ -118,7 +119,7 @@ public class GUIController implements Observer {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(primaryStage!=null)
+            if (primaryStage != null)
                 primaryStage.close();
             calcPath_btn.setDisable(true);
             calcPath_btn.setText("Connected");
@@ -129,7 +130,7 @@ public class GUIController implements Observer {
         viewModelSimulator.load_data(mapDisplayer);
     }
 
-    public void connect_popup(){
+    public void connect_popup() {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("./view/connect_view.fxml"));
         loader.setController(this);
         Parent root = null;
@@ -150,6 +151,10 @@ public class GUIController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        this.mapDisplayer.drawPath(arg.toString());
+        if(arg.getClass().getName().equals("String"))
+            this.mapDisplayer.drawPath(arg.toString());
+        else
+            this.mapDisplayer.drawAirplane((String[])arg);
+
     }
 }
