@@ -12,8 +12,12 @@
 
 
 <?import view.MapDisplayer?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.Pane?>
 <AnchorPane prefHeight="350.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GUIController" >
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.GUIController">
     <children>
         <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="59.0" prefWidth="266.0" spacing="15.0">
             <children>
@@ -28,7 +32,8 @@
                 strokeWidth="2.0"/>
         <Circle fx:id="joystick" fill="DODGERBLUE" layoutX="651.0" layoutY="196.0" radius="20.0" stroke="#0400ff"
                 strokeType="INSIDE"/>
-        <Slider fx:id="throttle_slider" layoutX="531.0" layoutY="125.0" orientation="VERTICAL" value="0" min="0" max="1"/>
+        <Slider fx:id="throttle_slider" layoutX="531.0" layoutY="125.0" orientation="VERTICAL" value="0" min="0"
+                max="1"/>
         <Text layoutX="725.0" layoutY="204.0" rotate="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="⬸elevator⤑"/>
         <Text layoutX="537.0" layoutY="199.0" rotate="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="throttle"/>
         <Text layoutX="633.0" layoutY="300.0" strokeType="OUTSIDE" strokeWidth="0.0" text="rudder"/>
@@ -38,6 +43,8 @@
                      text="Auto Pilot"/>
         <TextArea layoutX="303.0" layoutY="65.0" prefHeight="235.0" prefWidth="199.0"/>
         <MapDisplayer fx:id="mapDisplayer" height="235.0" layoutX="8.0" layoutY="65.0" width="264.0"/>
-<!--        <MapDisplayer fx:id="mapDisplayer" height="152.0" layoutX="8.0" layoutY="65.0" width="247.0"/>-->
+        <ImageView fx:id="airplane" layoutX="-4.0" layoutY="55.0" visible="false">
+            <Image url="@/resources/plane0.png" requestedHeight="25" requestedWidth="25"/>
+        </ImageView>
     </children>
 </AnchorPane>

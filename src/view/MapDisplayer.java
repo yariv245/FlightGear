@@ -68,7 +68,6 @@ public class MapDisplayer extends Canvas {
 
 
         reDraw();
-        this.drawAirplane(new String[]{"21.308333", "-157.930417", "90.0"});
     }
 
     public void reDraw() {

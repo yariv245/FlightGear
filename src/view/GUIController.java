@@ -1,5 +1,6 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
@@ -10,8 +11,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import viewModel.ViewModelSimulator;
 
 import java.io.IOException;
@@ -39,6 +42,8 @@ public class GUIController implements Observer {
     Slider rudder_slider;
     @FXML
     Slider throttle_slider;
+    @FXML
+    ImageView airplane;
 
     double maxRadius = 80;
     DoubleProperty joystickValX = new SimpleDoubleProperty();
@@ -151,10 +156,66 @@ public class GUIController implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(arg.getClass().getName().equals("String"))
+        if (arg.getClass().getName().equals("java.lang.String"))
             this.mapDisplayer.drawPath(arg.toString());
-        else
-            this.mapDisplayer.drawAirplane((String[])arg);
+//        else{
+        if (!airplane.isVisible())
+            airplane.setVisible(true);
+        //Convert the observable data to String[]
+//            String[] data = (String[])arg;
+        String[] data = (new String[]{"21.308333", "-157.930417", "90.0"});
+        Pair<Double, Double> positions = calcPositions(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+        double x = positions.getKey()*-1;
+        double y = positions.getValue();
+        //Update the airplane position
+        airplane.setLayoutX(x);
+        airplane.setLayoutY(y);
+        System.out.println("x: " + x);
+        System.out.println("y: " + y);
 
+        try {
+            Thread.sleep(3000);
+            airplane.setLayoutX(x+65);
+            airplane.setLayoutY(y+ 8 );
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        airplane.setRotate(Double.parseDouble(data[2]));
+//        }
     }
+
+    private Pair<Double, Double> calcPositions(double realLat, double realLng) {
+        double lng, lat;
+//        lat = (realLat - 85) * 2.0588;
+//        lng = (realLng + 180) * 2.22222222222;
+        double x = ((realLng  * 800 / 180) + (800 / 2))/3.03030303030303030303;
+        double y = (( realLat * 350 / 360.0) + (350 / 2))/1.4893617021276595;
+        return new Pair<>(x, y);
+    }
+
+
+
+//    private Pair<Double, Double> calcPositions(double realLat, double realLng) {
+//        double lng, lat;
+//        lat = (realLat - 85) * 1.3823;
+//        lng = (realLng + 180) * 0.7333333;
+//        return new Pair<>(lng, lat);
+//    }
+
+    /*
+    *     private void drawAirplane(GraphicsContext graphicsContext){
+        graphicsContext.save();
+        Rotate r = new Rotate(angle, airplane_pos.getX() * cube_length, airplane_pos.getY() * cube_length);
+        graphicsContext.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
+        graphicsContext.drawImage(AirplaneImage, airplane_pos.getX() * cube_length, airplane_pos.getY() * cube_length);
+        graphicsContext.restore();
+    }
+    *             double x = Double.parseDouble(input[0]);
+            double y = Double.parseDouble(input[1]);
+            angle = Double.parseDouble(input[2]);
+            x = (x - startPos.getX() + offset) / offset;
+            y = Math.abs((y - startPos.getY() + offset) / offset);
+            airplane_pos.setX(x);
+            airplane_pos.setY(y);
+    * */
 }
