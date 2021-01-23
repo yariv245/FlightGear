@@ -2,24 +2,20 @@ package view;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import viewModel.ViewModelSimulator;
-
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -48,13 +44,14 @@ public class GUIController implements Observer {
     RadioButton autoPilot_radio_btn;
     @FXML
     ImageView airplane;
+    @FXML
+    Button load_text_btn;
+    @FXML
+    TextArea text_area;
 
     double maxRadius = 80;
     DoubleProperty joystickValX = new SimpleDoubleProperty();
     DoubleProperty joystickValY = new SimpleDoubleProperty();
-
-    public DoubleProperty airplaneX = new SimpleDoubleProperty();//Todo: bind this prop to realtime airplane pos
-    public DoubleProperty airplaneY = new SimpleDoubleProperty();
 
     Stage primaryStage;
 
@@ -70,6 +67,7 @@ public class GUIController implements Observer {
                 takeOff();
             //Todo: navigate to target
         });
+        load_text_btn.setOnAction(actionEvent -> loadText());
     }
 
     public void initializeJoystick() {
@@ -106,8 +104,8 @@ public class GUIController implements Observer {
         viewModelSimulator.rudderVal.bind(rudder_slider.valueProperty());
         this.viewModelSimulator.addObserver(this);
 
-        this.airplaneX.bind(viewModelSimulator.airplaneX);
-        this.airplaneY.bind(viewModelSimulator.airplaneY);
+        viewModelSimulator.airplaneX.bind(this.airplane.layoutXProperty());
+        viewModelSimulator.airplaneY.bind(this.airplane.layoutYProperty());
     }
 
     public void rudderChange() {
@@ -142,6 +140,10 @@ public class GUIController implements Observer {
         });
     }
 
+    private void loadText() {
+        viewModelSimulator.load_text(text_area);
+    }
+
     public void load_data() throws IOException {
         viewModelSimulator.load_data(mapDisplayer);
     }
@@ -166,32 +168,6 @@ public class GUIController implements Observer {
     }
 
     public void takeOff() {
-        String[] takeOffCommands1 = {
-                "breaks = 0",
-                "throttle = 1",
-                "var h = heading",
-                "var minus = -1",
-                "var a = alt",
-                "print start",
-                "while a - alt > -50 {",
-                "rudder = ( h - heading ) / 200",
-                "aileron = minus * roll / 200",
-                "print aileron",
-                "elevator = pitch / 50",
-                "print elevator",
-                "print alt",
-                "}",
-                "print here3",
-                "print change",
-                "while alt < 1000 {",
-                "rudder = ( h - heading ) / 200",
-                "print here",
-                "aileron = minus * roll / 200",
-                "elevator = pitch / 50",
-                "print alt",
-                "}",
-                "print done",
-        };
 
         String[] takeOffCommands = {
                 "var minus = -1",

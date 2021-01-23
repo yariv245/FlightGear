@@ -3,6 +3,8 @@ package model;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Pair;
+import view.MapDisplayer;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -87,7 +89,7 @@ public class Model extends Observable {
         sentToInterpreterServer(initial);
     }
 
-    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) {
+    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) {
         try {
             //Check if we already created connection once
             if (this.socketCalcServer == null) {
@@ -109,9 +111,7 @@ public class Model extends Observable {
             outClientCalcServer.println("end");
 
             //Send the airplane position
-//            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
-//            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
-            outClientCalcServer.println(0 + "," + 0);
+            outClientCalcServer.println((int) airplaneY + "," + (int) airplaneX);
 
             //Send the target position
             outClientCalcServer.println((int) targetY + "," + (int) targetX);
@@ -171,10 +171,9 @@ public class Model extends Observable {
                 socketInterpreter = new Socket(ip, port);
                 outInterpreter = new PrintWriter(socketInterpreter.getOutputStream());
                 while (!stopClientInterpreter) {
-                    //Thread.onSpinWait(); //Todo: check this line - inteliJ warning
+
                 }
-//                outInterpreter.close();
-//                socketInterpreter.close();
+
             } catch (IOException e) {
                 try {
                     Thread.sleep(1000);
@@ -236,5 +235,6 @@ public class Model extends Observable {
         outInterpreter.println("bye");
         outInterpreter.flush();
     }
+
 }
 
