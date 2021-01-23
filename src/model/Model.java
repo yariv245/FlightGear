@@ -74,6 +74,17 @@ public class Model extends Observable {
                 "var elevator",
                 "var rudder",
                 "var throttle",
+                "var breaks",
+                "var heading",
+                "var alt",
+                "var pitch",
+                "var roll",
+
+                "roll = bind simRoll",
+                "breaks = bind simBreaks",
+                "heading = bind simHeading",
+                "alt = bind simAltitude",
+                "pitch = bind simPitch",
                 "aileron = bind simAileron",
                 "elevator = bind simElevator",
                 "rudder = bind simRudder",
@@ -192,7 +203,6 @@ public class Model extends Observable {
 
     public void startServerInterpreter(int port) { // start client to connect to MyInterpreter server
         new Thread(() -> runServerInterpreter(port)).start();
-//        new RunServerService(port).start();
     }
 
     private void runServerInterpreter(int port) {
@@ -223,30 +233,6 @@ public class Model extends Observable {
         } catch (IOException e) {
         }
 
-    }
-
-    class RunServerService extends Service {
-
-        int port=0;
-        public RunServerService(int port) {
-            this.port = port;
-            setOnSucceeded((EventHandler<WorkerStateEvent>) workerStateEvent -> {
-                System.out.println("Succeed");
-            });
-
-        }
-
-
-        @Override
-        protected Task createTask() {
-            return new Task() {
-                @Override
-                protected Object call() throws Exception {
-                    runServerInterpreter(port);
-                    return null;
-                }
-            };
-        }
     }
 
     public synchronized void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server

@@ -26,6 +26,7 @@ public class MyInterpreter {
         result.put("openDataServer", new OpenServerCommand());
         result.put("connect", new ConnectCommand());
         result.put("disconnect", new DisconnectCommand());
+        result.put("print", new PrintCommand());
 
         return Collections.unmodifiableMap(result);
     }
@@ -38,14 +39,21 @@ public class MyInterpreter {
         map.put("simElevator", new Var(0, "/controls/flight/elevator"));
         map.put("simRudder", new Var(0, "/controls/flight/rudder"));
         map.put("simThrottle", new Var(0, "/controls/engines/current-engine/throttle"));
+        map.put("simHeading", new Var(0, "/instrumentation/heading-indicator/offset-deg"));
+        map.put("simAirspeed", new Var(0, "/instrumentation/airspeed-indicator/indicated-speed-kt"));
+        map.put("simRoll", new Var(0, "/instrumentation/attitude-indicator/indicated-roll-deg"));
+        map.put("simPitch", new Var(0, "/instrumentation/attitude-indicator/internal-pitch-deg"));
+        map.put("simAltitude", new Var(0, "/instrumentation/altimeter/indicated-altitude-ft"));
+        map.put("simBreaks", new Var(0, "/controls/flight/speedbrake"));
+
         map.put("simAirplaneX", new Var(0, "simAirplaneX"));
         map.put("simAirplaneY", new Var(0, "simAirplaneY"));
         return map;
     }
-
+    static ArrayList<String> loopLines = new ArrayList<String>();
     public static int interpret(String[] lines) {
         int reuslt = 0;
-        ArrayList<String> loopLines = new ArrayList<String>();
+
         Boolean insertLine = false;
         for (String line : lines) {//TODO:consider to remove this for and change the argument to String line
 //            try {
