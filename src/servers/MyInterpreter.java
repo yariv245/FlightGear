@@ -224,7 +224,7 @@ public class MyInterpreter {
                         };
                         MyInterpreter.interpret(dataToInterpret);
 //                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
-                        System.out.println("pitch: " + data[5] + " heading: " + data[12] + " roll: " + data[4] + " alt: " + data[9]);
+//                        System.out.println("pitch: " + data[5] + " heading: " + data[12] + " roll: " + data[4] + " alt: " + data[9]);
 
                     }
                     in.close();

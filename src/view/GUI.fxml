@@ -45,7 +45,7 @@
         <MapDisplayer fx:id="mapDisplayer" height="235.0" layoutX="8.0" layoutY="65.0" width="264.0"/>
 <!--        <MapDisplayer fx:id="mapDisplayer" layoutX="8.0" width="247.0" layoutY="65.0" height="152.0" />-->
         <ImageView fx:id="airplane" layoutX="-4.0" layoutY="55.0" visible="false">
-            <Image url="@/resources/plane0.png" requestedHeight="25" requestedWidth="25"/>
+            <Image url="@/resources/plane.png" requestedHeight="25" requestedWidth="25"/>
         </ImageView>
     </children>
 </AnchorPane>

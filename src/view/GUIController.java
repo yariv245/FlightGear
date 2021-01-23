@@ -215,14 +215,11 @@ public class GUIController implements Observer {
     public void update(Observable o, Object arg) {
         if (arg.getClass().getName().equals("java.lang.String"))
             this.mapDisplayer.drawPath(arg.toString());
-//        else {
+        else {
             if (!airplane.isVisible())
                 airplane.setVisible(true);
             //Convert the observable data to String[]
-//            String[] data = (String[])arg;
-        String[] data = (new String[]{"21.315213", "-157.926505", "90.0"});
-//            String[] data = (new String[]{"21.328867785399552", "-157.65725163345363", "90.0"});
-            //
+            String[] data = (String[]) arg;
             Pair<Double, Double> positions = latlngToScreenXY(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
             double x = positions.getKey();
             double y = positions.getValue();
@@ -230,30 +227,9 @@ public class GUIController implements Observer {
             airplane.setLayoutX(x);
             airplane.setLayoutY(y);
 
-//            try {
-//                Thread.sleep(3000);
-//                String[] data2 = (new String[]{"21.238137", "-157.634102", "90.0"});
-//                Pair<Double, Double> positions2 = latlngToScreenXY(Double.parseDouble(data2[0]), Double.parseDouble(data2[1]));
-//                double x2 = positions2.getKey();
-//                double y2 = positions2.getValue();
-//                //Update the airplane position
-//            airplane.setLayoutX(x2);
-//            airplane.setLayoutY(y2);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
             airplane.setRotate(Double.parseDouble(data[2]));
-//        }
+        }
     }
-
-//    private Pair<Double, Double> calcPositions(double realLat, double realLng) {
-//        double lng, lat;
-////        lat = (realLat - 85) * 2.0588;
-////        lng = (realLng + 180) * 2.22222222222;
-//        double x = ((realLng  * 800 / 180) + (800 / 2))/3.03030303030303030303;
-//        double y = (( realLat * 350 / 360.0) + (350 / 2))/1.4893617021276595;
-//        return new Pair<>(x, y);
-//    }
 
     double radius = 6371;
 
