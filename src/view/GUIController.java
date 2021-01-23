@@ -158,64 +158,108 @@ public class GUIController implements Observer {
     public void update(Observable o, Object arg) {
         if (arg.getClass().getName().equals("java.lang.String"))
             this.mapDisplayer.drawPath(arg.toString());
-//        else{
-        if (!airplane.isVisible())
-            airplane.setVisible(true);
-        //Convert the observable data to String[]
+//        else {
+            if (!airplane.isVisible())
+                airplane.setVisible(true);
+            //Convert the observable data to String[]
 //            String[] data = (String[])arg;
-        String[] data = (new String[]{"21.308333", "-157.930417", "90.0"});
-        Pair<Double, Double> positions = calcPositions(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
-        double x = positions.getKey()*-1;
-        double y = positions.getValue();
-        //Update the airplane position
-        airplane.setLayoutX(x);
-        airplane.setLayoutY(y);
-        System.out.println("x: " + x);
-        System.out.println("y: " + y);
+        String[] data = (new String[]{"21.315213", "-157.926505", "90.0"});
+//            String[] data = (new String[]{"21.328867785399552", "-157.65725163345363", "90.0"});
+            //
+            Pair<Double, Double> positions = latlngToScreenXY(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+            double x = positions.getKey();
+            double y = positions.getValue();
+            //Update the airplane position
+            airplane.setLayoutX(x);
+            airplane.setLayoutY(y);
 
-        try {
-            Thread.sleep(3000);
-            airplane.setLayoutX(x+65);
-            airplane.setLayoutY(y+ 8 );
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        airplane.setRotate(Double.parseDouble(data[2]));
+//            try {
+//                Thread.sleep(3000);
+//                String[] data2 = (new String[]{"21.238137", "-157.634102", "90.0"});
+//                Pair<Double, Double> positions2 = latlngToScreenXY(Double.parseDouble(data2[0]), Double.parseDouble(data2[1]));
+//                double x2 = positions2.getKey();
+//                double y2 = positions2.getValue();
+//                //Update the airplane position
+//            airplane.setLayoutX(x2);
+//            airplane.setLayoutY(y2);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            airplane.setRotate(Double.parseDouble(data[2]));
 //        }
     }
 
-    private Pair<Double, Double> calcPositions(double realLat, double realLng) {
-        double lng, lat;
-//        lat = (realLat - 85) * 2.0588;
-//        lng = (realLng + 180) * 2.22222222222;
-        double x = ((realLng  * 800 / 180) + (800 / 2))/3.03030303030303030303;
-        double y = (( realLat * 350 / 360.0) + (350 / 2))/1.4893617021276595;
-        return new Pair<>(x, y);
-    }
-
-
-
 //    private Pair<Double, Double> calcPositions(double realLat, double realLng) {
 //        double lng, lat;
-//        lat = (realLat - 85) * 1.3823;
-//        lng = (realLng + 180) * 0.7333333;
-//        return new Pair<>(lng, lat);
+////        lat = (realLat - 85) * 2.0588;
+////        lng = (realLng + 180) * 2.22222222222;
+//        double x = ((realLng  * 800 / 180) + (800 / 2))/3.03030303030303030303;
+//        double y = (( realLat * 350 / 360.0) + (350 / 2))/1.4893617021276595;
+//        return new Pair<>(x, y);
 //    }
 
-    /*
-    *     private void drawAirplane(GraphicsContext graphicsContext){
-        graphicsContext.save();
-        Rotate r = new Rotate(angle, airplane_pos.getX() * cube_length, airplane_pos.getY() * cube_length);
-        graphicsContext.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-        graphicsContext.drawImage(AirplaneImage, airplane_pos.getX() * cube_length, airplane_pos.getY() * cube_length);
-        graphicsContext.restore();
+    double radius = 6371;
+
+    public class referencePoint {
+        public double srcX;
+        double scrY;
+        double lat;
+        double lng;
+
+        public referencePoint(double scrX, double scrY, double lat, double lng) {
+            this.lat = lat;
+            this.lng = lng;
+            this.srcX = scrX;
+            this.scrY = scrY;
+        }
+
     }
-    *             double x = Double.parseDouble(input[0]);
-            double y = Double.parseDouble(input[1]);
-            angle = Double.parseDouble(input[2]);
-            x = (x - startPos.getX() + offset) / offset;
-            y = Math.abs((y - startPos.getY() + offset) / offset);
-            airplane_pos.setX(x);
-            airplane_pos.setY(y);
-    * */
+
+    //original
+//    // Calculate global X and Y for top-left reference point
+//    referencePoint p0 = new referencePoint(-4, 50, 21.443738, -158.020959);
+//    // Calculate global X and Y for bottom-right reference point
+//    referencePoint p1 = new referencePoint(260, 285, 21.238137136691147, -157.63410286953055);
+
+    //1:1 map data
+//    // Calculate global X and Y for top-left reference point
+//    referencePoint p0  = new referencePoint(-4,50,21.443738,-158.020959);
+//    // Calculate global X and Y for bottom-right reference point
+//    referencePoint p1  = new referencePoint(243,202,21.238137136691147,-157.63410286953055);
+
+    //tests
+    // Calculate global X and Y for top-left reference point
+    referencePoint p0 = new referencePoint(-4, 50, 21.443738, -158.020959);
+    // Calculate global X and Y for bottom-right reference point
+    referencePoint p1 = new referencePoint(260, 285, 21.15736059993721, -157.66010286953055);
+
+    // This function converts lat and lng coordinates to GLOBAL X and Y positions
+    public Pair<Double, Double> latlngToGlobalXY(double lat, double lng) {
+        // Calculates x based on cos of average of the latitudes
+        double x = radius * lng * Math.cos((p0.lat + p1.lat) / 2);
+        //Calculates y based on latitude
+        double y = radius * lat;
+        return new Pair(x, y);
+    }
+
+    Pair<Double, Double> p0_pos = latlngToGlobalXY(p0.lat, p0.lng);
+    Pair<Double, Double> p1_pos = latlngToGlobalXY(p1.lat, p1.lng);
+
+
+    // This function converts lat and lng coordinates to SCREEN X and Y positions
+    public Pair<Double, Double> latlngToScreenXY(double lat, double lng) {
+        // Calculate global X and Y for projection point
+        Pair<Double, Double> pos = latlngToGlobalXY(lat, lng);
+        // Calculate the percentage of Global X position in relation to total global width
+        double perX = ((pos.getKey() - p0_pos.getKey()) / (p1_pos.getKey() - p0_pos.getKey()));
+        // Calculate the percentage of Global Y position in relation to total global height
+        double perY = ((pos.getValue() - p0_pos.getValue()) / (p1_pos.getValue() - p0_pos.getValue()));
+
+        // Returns the screen position based on reference points
+        double returnX = p0.srcX + (p1.srcX - p0.srcX) * perX;
+        double returnY = p0.scrY + (p1.scrY - p0.scrY) * perY;
+
+        return new Pair<>(returnX, returnY);
+    }
+
 }
