@@ -1,14 +1,16 @@
 package view;
 
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -43,6 +45,8 @@ public class GUIController implements Observer {
     @FXML
     Slider throttle_slider;
     @FXML
+    RadioButton autoPilot_radio_btn;
+    @FXML
     ImageView airplane;
 
     double maxRadius = 80;
@@ -54,11 +58,18 @@ public class GUIController implements Observer {
 
     Stage primaryStage;
 
+    Boolean afterTakeOff = false;
+
     @FXML
     public void initialize() {
         initializeJoystick();
         rudder_slider.valueProperty().addListener((observableValue, number, t1) -> rudderChange());
         throttle_slider.valueProperty().addListener((observableValue, number, t1) -> throttleChange());
+        autoPilot_radio_btn.setOnAction(actionEvent -> {
+            if (!afterTakeOff)
+                takeOff();
+            //Todo: navigate to target
+        });
     }
 
     public void initializeJoystick() {
@@ -152,6 +163,50 @@ public class GUIController implements Observer {
         viewModelSimulator.server_port.bind(port_textField.textProperty());
 
         primaryStage.show();
+    }
+
+    public void takeOff() {
+        String[] takeOffCommands1 = {
+                "breaks = 0",
+                "throttle = 1",
+                "var h = heading",
+                "var minus = -1",
+                "var a = alt",
+                "print start",
+                "while a - alt > -50 {",
+                "rudder = ( h - heading ) / 200",
+                "aileron = minus * roll / 200",
+                "print aileron",
+                "elevator = pitch / 50",
+                "print elevator",
+                "print alt",
+                "}",
+                "print here3",
+                "print change",
+                "while alt < 1000 {",
+                "rudder = ( h - heading ) / 200",
+                "print here",
+                "aileron = minus * roll / 200",
+                "elevator = pitch / 50",
+                "print alt",
+                "}",
+                "print done",
+        };
+
+        String[] takeOffCommands = {
+                "breaks = 0",
+                "throttle = 1",
+                "var h = heading",
+                "while alt < 1000 {",
+                "rudder = (h – heading) / 20",
+                "aileron = 0",
+                "elevator = 1",
+                "print alt",
+                "}"
+        };
+
+        this.viewModelSimulator.sentToInterpreterServer(takeOffCommands);
+        this.afterTakeOff = true;
     }
 
     @Override

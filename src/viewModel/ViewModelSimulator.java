@@ -139,6 +139,10 @@ public class ViewModelSimulator extends Observable implements Observer {
 
     }
 
+    public void sentToInterpreterServer(String[] lines){
+        this.model.sentToInterpreterServer(lines);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         //Notify just arrived
