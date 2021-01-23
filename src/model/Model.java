@@ -2,20 +2,13 @@ package model;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.util.Pair;
-import servers.MyInterpreter;
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
-
 
 public class Model extends Observable {
 
@@ -30,10 +23,6 @@ public class Model extends Observable {
     BufferedReader inInterpreter;
     private volatile boolean stopClientInterpreter = false;
     private volatile boolean stopServerInterpreter = false;
-    double airplaneX;
-    double airplaneY;
-    //Represent the row and col in MapDisplayer.mapData
-
     public DoubleProperty scale;
 
     public Model() {
@@ -98,7 +87,7 @@ public class Model extends Observable {
         sentToInterpreterServer(initial);
     }
 
-    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) throws IOException {
+    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) {
         try {
             //Check if we already created connection once
             if (this.socketCalcServer == null) {
@@ -124,8 +113,7 @@ public class Model extends Observable {
 //            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
             outClientCalcServer.println(0 + "," + 0);
 
-//            Send the target position
-//            outClientCalcServer.println(3+","+3);
+            //Send the target position
             outClientCalcServer.println((int) targetY + "," + (int) targetX);
 
             outClientCalcServer.flush();
@@ -170,8 +158,7 @@ public class Model extends Observable {
         int lng, lat;
         lat = (int) (Math.abs(Math.abs(x) - 21.443738) * scale.get());
         lng = (int) (Math.abs(Math.abs(y) - 158.020959) * scale.get());
-        Pair<Integer, Integer> positions = new Pair<>(lng, lat);
-        return positions;
+        return new Pair<>(lng, lat);
     }
 
     public void startClientInterpreter(String ip, int port) { // start client to connect to MyInterpreter server
@@ -184,7 +171,7 @@ public class Model extends Observable {
                 socketInterpreter = new Socket(ip, port);
                 outInterpreter = new PrintWriter(socketInterpreter.getOutputStream());
                 while (!stopClientInterpreter) {
-
+                    //Thread.onSpinWait(); //Todo: check this line - inteliJ warning
                 }
 //                outInterpreter.close();
 //                socketInterpreter.close();
@@ -201,7 +188,8 @@ public class Model extends Observable {
         stopClientInterpreter = true;
     }
 
-    public void startServerInterpreter(int port) { // start client to connect to MyInterpreter server
+    // start client to connect to MyInterpreter server
+    public void startServerInterpreter(int port) {
         new Thread(() -> runServerInterpreter(port)).start();
     }
 
@@ -217,11 +205,14 @@ public class Model extends Observable {
                     System.out.println("Gui server Thread: interpreter Connected");
                     inInterpreter = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                     String line;
-                    System.out.println("Before while");
-                        while (!(line = inInterpreter.readLine()).equals("bye")) {
-                            System.out.println("Gui server received: " + line);
-                        }
-                    System.out.println("After while");
+                    String[] lineSeparated;
+                    while (!(line = inInterpreter.readLine()).equals("bye")) {
+                        // xVal,yVal,headingVal
+                        lineSeparated = line.split(",");
+                        setChanged();
+                        notifyObservers(lineSeparated);
+                        System.out.println("Gui server received: " + line);
+                    }
                     System.out.println("MyInterpreter server: Client DisConnected");
                     inInterpreter.close();
                     socket.close();
@@ -230,9 +221,8 @@ public class Model extends Observable {
                 }
             }
             server.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
-
     }
 
     public void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
