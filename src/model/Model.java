@@ -225,8 +225,7 @@ public class Model extends Observable {
         }
     }
 
-    // send data to MyInterpreter server
-    public void sentToInterpreterServer(String[] lines) {
+    public void sentToInterpreterServer(String[] lines) { // send data to MyInterpreter server
         if (outInterpreter == null)
             return;
 
@@ -234,6 +233,8 @@ public class Model extends Observable {
             outInterpreter.println(line);
             outInterpreter.flush();
         }
+        outInterpreter.println("bye");
+        outInterpreter.flush();
     }
 }
 
