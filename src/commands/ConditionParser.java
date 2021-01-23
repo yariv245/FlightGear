@@ -20,7 +20,7 @@ public class ConditionParser implements Command {
                 while (left < right) {
                     for (String line : command) {
                         String newLine = line.replace("\t", "");
-                        result = MyInterpreter.parser(MyInterpreter.lexer(newLine));
+                        MyInterpreter.interpret(command.toArray(new String[command.size()]));
                         left = MyInterpreter.getSymbolTable(condition[1]).getValue(); // update
                     }
                 }

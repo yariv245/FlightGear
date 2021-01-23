@@ -44,9 +44,11 @@ public class Var extends Observable implements Observer {
                 if (!this.getName().isEmpty() && (this.getName().contains("/"))) { // check if the name parm in Var is empty
                     msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
                     MyInterpreter.sendToClientFlightGear(msg); // send to server the message to change the parameter
-                }else{
-                    msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
-                    MyInterpreter.sendToClientGui(msg); // send to server the message to change the parameter
+                } else {
+                    if (this.getName().contains("airplane")) {
+                        msg = "set " + this.getName() + " " + this.getValue(); // prepare msg "set ...... 5"
+                        MyInterpreter.sendToClientGui(msg); // send to server the message to change the parameter
+                    }
                 }
             }
         }

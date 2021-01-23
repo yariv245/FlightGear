@@ -190,14 +190,16 @@ public class GUIController implements Observer {
         };
 
         String[] takeOffCommands = {
+                "var minus = -1",
                 "breaks = 0",
                 "throttle = 1",
                 "var h = heading",
                 "while alt < 1000 {",
-                "rudder = (h – heading) / 20",
-                "aileron = 0",
-                "elevator = 1",
+                "rudder = (h - heading) / 20",
+                "aileron = (minus * roll) / 70",
+                "elevator = pitch / 50",
                 "print alt",
+                "sleep 250",
                 "}"
         };
 

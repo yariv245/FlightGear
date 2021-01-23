@@ -27,6 +27,8 @@ public class MyInterpreter {
         result.put("connect", new ConnectCommand());
         result.put("disconnect", new DisconnectCommand());
         result.put("print", new PrintCommand());
+        result.put("sleep", new SleepCommand());
+
 
         return Collections.unmodifiableMap(result);
     }
@@ -50,7 +52,9 @@ public class MyInterpreter {
         map.put("simAirplaneY", new Var(0, "simAirplaneY"));
         return map;
     }
+
     static ArrayList<String> loopLines = new ArrayList<String>();
+
     public static int interpret(String[] lines) {
         int reuslt = 0;
 
@@ -162,7 +166,8 @@ public class MyInterpreter {
         try {
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
-            String[] lines = new String[1];
+            String[] lines ;
+            ArrayList<String> cmds = new ArrayList<>() ;
             System.out.print("Interpreter server Gui: Waiting for clients\n");
             while (!stop) {
                 try {
@@ -170,12 +175,16 @@ public class MyInterpreter {
                     Socket socket = server.accept();
                     System.out.println("Interpreter server Gui: Client Connected");
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    String line;
+                    String line = "";
+                    while (!line.equals("exit")) {
 
-                    while (!(line = in.readLine()).equals("bye")) {
-                        lines[0] = line;
+                        while (!(line = in.readLine()).equals("bye")) {
+                            cmds.add(line);
+                            System.out.println("Gui sent message");
+                        }
+                        lines = cmds.toArray(new String[cmds.size()]);
                         MyInterpreter.interpret(lines); // interpret msg from GUI
-                        System.out.println("Gui sent message");
+                        cmds.clear();
                     }
 
                     in.close();
@@ -193,7 +202,7 @@ public class MyInterpreter {
         try {
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(1000);
-            String[] initial = {"var airplaneX = bind simAirplaneX","var airplaneY = bind simAirplaneY"};
+            String[] initial = {"var airplaneX = bind simAirplaneX", "var airplaneY = bind simAirplaneY"};
             System.out.print("Interpreter server flightgear: Waiting for clients\n");
             MyInterpreter.interpret(initial);
             while (!stop) {
@@ -202,12 +211,21 @@ public class MyInterpreter {
                     Socket socket = server.accept();
                     System.out.println("Interpreter server flightgear: Client Connected");
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    String line;
+                    String line = "";
                     while (!(line = in.readLine()).equals("bye")) {
+//                        System.out.println("server: " + line);
                         String[] data = line.split(",");
-                        String[] dataToInterpret = {"airplaneY = " + data[data.length - 2],"airplaneX = " + data[data.length - 1]};
+                        String[] dataToInterpret = {"airplaneY = " + data[data.length - 2],
+                                "airplaneX = " + data[data.length - 1],
+                                "simPitch = " + data[5],
+                                "simRoll = " + data[4],
+                                "simHeading = " + data[12],
+                                "simAltitude = " + data[9]
+                        };
                         MyInterpreter.interpret(dataToInterpret);
-                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
+//                        System.out.println("Server Sent message: " + data[data.length - 2]+"," + data[data.length - 1]);
+                        System.out.println("pitch: " + data[5] + " heading: " + data[12] + " roll: " + data[4] + " alt: " + data[9]);
+
                     }
                     in.close();
                     socket.close();
