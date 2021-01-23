@@ -166,34 +166,37 @@ public class GUIController implements Observer {
     }
 
     public void takeOff() {
-        String[] takeOffCommands1 = {
-                "breaks = 0",
-                "throttle = 1",
-                "var h = heading",
-                "var minus = -1",
-                "var a = alt",
-                "print start",
-                "while a - alt > -50 {",
-                "rudder = ( h - heading ) / 200",
-                "aileron = minus * roll / 200",
-                "print aileron",
-                "elevator = pitch / 50",
-                "print elevator",
-                "print alt",
-                "}",
-                "print here3",
-                "print change",
-                "while alt < 1000 {",
-                "rudder = ( h - heading ) / 200",
-                "print here",
-                "aileron = minus * roll / 200",
-                "elevator = pitch / 50",
-                "print alt",
-                "}",
-                "print done",
-        };
+        String[] startEngineCommands = {"var elevator = bind simElevator",
+                "var avionics = bind simAvionics",
+                "var bat = bind simBat",
+                "var alt = bind simAltitude",
+                "var magnetos = bind simMagnetos",
+                "var throttle = bind simThrottle",
+                "var primer = bind simPrimer",
+                "var mixture = bind simMixture",
+                "var starter = bind simStarter",
+                "var autostart = bind simAutostart",
+                "elevator = 0",
+                "avionics  = 1",
+                "bat = 1",
+                "magnetos = 3",
+                "throttle = 0.2",
+                "primer = 3",
+                "mixture = 1",
+                "starter = 1",
+                "autostart = 1"};
+
+        this.viewModelSimulator.sentToInterpreterServer(startEngineCommands);
+
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         String[] takeOffCommands = {
+                "var parking = bind simParking",
+                "parking = 0",
                 "var minus = -1",
                 "breaks = 0",
                 "throttle = 1",

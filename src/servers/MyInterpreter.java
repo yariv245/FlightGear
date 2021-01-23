@@ -47,6 +47,14 @@ public class MyInterpreter {
         map.put("simPitch", new Var(0, "/instrumentation/attitude-indicator/internal-pitch-deg"));
         map.put("simAltitude", new Var(0, "/instrumentation/altimeter/indicated-altitude-ft"));
         map.put("simBreaks", new Var(0, "/controls/flight/speedbrake"));
+        map.put("simAvionics", new Var(0, "/controls/switches/master-avionics"));
+        map.put("simBat", new Var(0, "/controls/switches/master-bat"));
+        map.put("simMagnetos", new Var(0, "/controls/switches/magnetos"));
+        map.put("simPrimer", new Var(0, "/controls/engines/engine/primer"));
+        map.put("simMixture", new Var(0, "/controls/engines/current-engine/mixture"));
+        map.put("simStarter", new Var(0, "/controls/switches/starter"));
+        map.put("simAutostart", new Var(0, "/engines/active-engine/auto-start"));
+        map.put("simParking", new Var(1, "/sim/model/c172p/brake-parking"));
 
         map.put("simAirplaneX", new Var(0, "simAirplaneX"));
         map.put("simAirplaneY", new Var(0, "simAirplaneY"));

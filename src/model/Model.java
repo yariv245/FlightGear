@@ -25,6 +25,8 @@ public class Model extends Observable {
     private volatile boolean stopServerInterpreter = false;
     public DoubleProperty scale;
 
+    double airplaneX;
+    double airplaneY;
     public Model() {
         scale = new SimpleDoubleProperty();
         startServerInterpreter(5404);
@@ -109,9 +111,9 @@ public class Model extends Observable {
             outClientCalcServer.println("end");
 
             //Send the airplane position
-//            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
-//            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
-            outClientCalcServer.println(0 + "," + 0);
+           Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
+            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
+//            outClientCalcServer.println(0 + "," + 0);
 
             //Send the target position
             outClientCalcServer.println((int) targetY + "," + (int) targetX);
@@ -209,7 +211,9 @@ public class Model extends Observable {
                     while (!(line = inInterpreter.readLine()).equals("bye")) {
                         // xVal,yVal,headingVal
                         lineSeparated = line.split(",");
-                        setChanged();
+                        airplaneX = Double.parseDouble(lineSeparated[1]);
+                        airplaneY = Double.parseDouble(lineSeparated[0]);
+                        setChanged(); // notify viewmodel -> notify view. data from server arrived
                         notifyObservers(lineSeparated);
                         System.out.println("Gui server received: " + line);
                     }
