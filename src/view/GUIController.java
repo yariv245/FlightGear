@@ -1,7 +1,10 @@
 package view;
 
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
@@ -14,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import viewModel.ViewModelSimulator;
+
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Observable;
@@ -43,6 +47,8 @@ public class GUIController implements Observer {
     @FXML
     RadioButton autoPilot_radio_btn;
     @FXML
+    RadioButton manual_radio_btn;
+    @FXML
     ImageView airplane;
     @FXML
     Button load_text_btn;
@@ -62,12 +68,15 @@ public class GUIController implements Observer {
         initializeJoystick();
         rudder_slider.valueProperty().addListener((observableValue, number, t1) -> rudderChange());
         throttle_slider.valueProperty().addListener((observableValue, number, t1) -> throttleChange());
+        load_text_btn.setOnAction(actionEvent -> loadText());
+        ToggleGroup toggleGroup = new ToggleGroup();
+        autoPilot_radio_btn.setToggleGroup(toggleGroup);
+        manual_radio_btn.setToggleGroup(toggleGroup);
+        manual_radio_btn.fire();
         autoPilot_radio_btn.setOnAction(actionEvent -> {
             if (!afterTakeOff)
                 takeOff();
-            //Todo: navigate to target
         });
-        load_text_btn.setOnAction(actionEvent -> loadText());
     }
 
     public void initializeJoystick() {
@@ -147,7 +156,7 @@ public class GUIController implements Observer {
     }
 
     public void load_data() throws IOException {
-        viewModelSimulator.load_data(mapDisplayer);
+        viewModelSimulator.load_data(mapDisplayer, airplane);
     }
 
     public void connect_popup() {
@@ -170,52 +179,65 @@ public class GUIController implements Observer {
     }
 
     public void takeOff() {
-        String[] startEngineCommands = {"var elevator = bind simElevator",
-                "var avionics = bind simAvionics",
-                "var bat = bind simBat",
-                "var alt = bind simAltitude",
-                "var magnetos = bind simMagnetos",
-                "var throttle = bind simThrottle",
-                "var primer = bind simPrimer",
-                "var mixture = bind simMixture",
-                "var starter = bind simStarter",
-                "var autostart = bind simAutostart",
-                "elevator = 0",
-                "avionics  = 1",
-                "bat = 1",
-                "magnetos = 3",
-                "throttle = 0.2",
-                "primer = 3",
-                "mixture = 1",
-                "starter = 1",
-                "autostart = 1"};
 
-        this.viewModelSimulator.sentToInterpreterServer(startEngineCommands);
+        class takeOffService extends Service{
+            ViewModelSimulator viewModelSimulator;
+            takeOffService(ViewModelSimulator viewModelSimulator){
+                this.viewModelSimulator= viewModelSimulator;
+            }
 
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            @Override
+            protected Task createTask() {
+                String[] startEngineCommands = {"var elevator = bind simElevator",
+                        "var avionics = bind simAvionics",
+                        "var bat = bind simBat",
+                        "var alt = bind simAltitude",
+                        "var magnetos = bind simMagnetos",
+                        "var throttle = bind simThrottle",
+                        "var primer = bind simPrimer",
+                        "var mixture = bind simMixture",
+                        "var starter = bind simStarter",
+                        "var autostart = bind simAutostart",
+                        "elevator = 0",
+                        "avionics  = 1",
+                        "bat = 1",
+                        "magnetos = 3",
+                        "throttle = 0.2",
+                        "primer = 3",
+                        "mixture = 1",
+                        "starter = 1",
+                        "autostart = 1",
+                        "sleep 7000"
+                };
+
+                this.viewModelSimulator.sentToInterpreterServer(startEngineCommands);
+
+
+
+                String[] takeOffCommands = {
+                        "var parking = bind simParking",
+                        "parking = 0",
+                        "var minus = -1",
+                        "breaks = 0",
+                        "throttle = 1",
+                        "var h = heading",
+                        "while alt < 1000 {",
+                        "rudder = (h - heading) / 20",
+                        "aileron = (minus * roll) / 70",
+                        "elevator = pitch / 50",
+                        "print alt",
+                        "sleep 250",
+                        "}"
+                };
+
+                this.viewModelSimulator.sentToInterpreterServer(takeOffCommands);
+//                this.afterTakeOff = true;
+                return null;
+            }
         }
+        new takeOffService(viewModelSimulator).start();
 
-        String[] takeOffCommands = {
-                "var parking = bind simParking",
-                "parking = 0",
-                "var minus = -1",
-                "breaks = 0",
-                "throttle = 1",
-                "var h = heading",
-                "while alt < 1000 {",
-                "rudder = (h - heading) / 20",
-                "aileron = (minus * roll) / 70",
-                "elevator = pitch / 50",
-                "print alt",
-                "sleep 250",
-                "}"
-        };
 
-        this.viewModelSimulator.sentToInterpreterServer(takeOffCommands);
-        this.afterTakeOff = true;
     }
 
     @Override
@@ -223,8 +245,8 @@ public class GUIController implements Observer {
         if (arg.getClass().getName().equals("java.lang.String"))
             this.mapDisplayer.drawPath(arg.toString());
         else {
-            if (!airplane.isVisible())
-                airplane.setVisible(true);
+//            if (!airplane.isVisible())
+//                airplane.setVisible(true);
             //Convert the observable data to String[]
             String[] data = (String[]) arg;
             Pair<Double, Double> positions = latlngToScreenXY(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
@@ -234,7 +256,7 @@ public class GUIController implements Observer {
             airplane.setLayoutX(x);
             airplane.setLayoutY(y);
 
-            airplane.setRotate(Double.parseDouble(data[2]) -90);
+            airplane.setRotate(Double.parseDouble(data[2]) - 120);
         }
     }
 

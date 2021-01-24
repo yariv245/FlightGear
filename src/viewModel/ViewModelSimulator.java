@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Model;
@@ -100,7 +101,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         }
     }
 
-    public void load_data(MapDisplayer mapDisplayer) throws IOException {
+    public void load_data(MapDisplayer mapDisplayer, ImageView airplane) throws IOException {
         List<String[]> csvMapData = null;
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
         fileChooser.setInitialDirectory(new File(currentPath + "/src/resources"));
@@ -148,6 +149,8 @@ public class ViewModelSimulator extends Observable implements Observer {
 
         });
         mapDisplayer.setMapData(csvAsInt);
+        if (!airplane.isVisible())
+            airplane.setVisible(true);
     }
 
     public void sentToInterpreterServer(String[] lines) {

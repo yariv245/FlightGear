@@ -6,7 +6,7 @@ public class SleepCommand implements Command{
     @Override
     public Integer doCommand(List<String> command) {
         try {
-            Thread.sleep(250);
+            Thread.sleep(Integer.parseInt(command.get(0)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
