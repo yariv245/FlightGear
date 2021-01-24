@@ -3,6 +3,8 @@ package model;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.util.Pair;
+import view.MapDisplayer;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -89,14 +91,15 @@ public class Model extends Observable {
         sentToInterpreterServer(initial);
     }
 
-    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY) {
+    public void connectToCalcServer(String ip, int port, int[][] matrix, double targetX, double targetY, double airplaneX, double airplaneY) {
         try {
             //Check if we already created connection once
             if (this.socketCalcServer == null) {
-                socketCalcServer = new Socket(ip, port);
-                this.outClientCalcServer = new PrintWriter(socketCalcServer.getOutputStream());
-                this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcServer.getInputStream()));
+
             }
+            socketCalcServer = new Socket(ip, port);
+            this.outClientCalcServer = new PrintWriter(socketCalcServer.getOutputStream());
+            this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcServer.getInputStream()));
 
             //Send the matrix
             for (int[] ints : matrix) {
@@ -112,11 +115,14 @@ public class Model extends Observable {
 
             //Send the airplane position
            Pair<Integer, Integer> airplanePositions = calcPositions(airplaneX, airplaneY);
-            outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
+            //outClientCalcServer.println(airplanePositions.getKey()+","+airplanePositions.getValue());
 //            outClientCalcServer.println(0 + "," + 0);
+//            outClientCalcServer.println((int) airplaneY + "," + (int) airplaneX);
+            outClientCalcServer.println(63 + "," + 52);
 
             //Send the target position
-            outClientCalcServer.println((int) targetY + "," + (int) targetX);
+            outClientCalcServer.println((int) 40.68936170212766 + "," + (int) 130.98484848484847);
+//            System.out.println("@@@@@@@   X  :" +targetX + "@@@@@@@   Y  :"+targetY);
 
             outClientCalcServer.flush();
 
@@ -135,18 +141,14 @@ public class Model extends Observable {
                 //Once the response (path) is returned, notify the ViewModel
                 setChanged();
                 notifyObservers(path);
-                outClientCalcServer.close();
+//                outClientCalcServer.close();
                 try {
+                    this.socketCalcServer.close();
                     inClientCalcServer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    this.inClientCalcServer.close();
-                    this.socketCalcServer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 this.outClientCalcServer.close();
             });
 
@@ -173,10 +175,9 @@ public class Model extends Observable {
                 socketInterpreter = new Socket(ip, port);
                 outInterpreter = new PrintWriter(socketInterpreter.getOutputStream());
                 while (!stopClientInterpreter) {
-                    //Thread.onSpinWait(); //Todo: check this line - inteliJ warning
+
                 }
-//                outInterpreter.close();
-//                socketInterpreter.close();
+
             } catch (IOException e) {
                 try {
                     Thread.sleep(1000);
@@ -240,5 +241,6 @@ public class Model extends Observable {
         outInterpreter.println("bye");
         outInterpreter.flush();
     }
+
 }
 

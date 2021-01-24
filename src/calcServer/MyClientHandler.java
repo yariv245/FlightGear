@@ -69,6 +69,9 @@ public class MyClientHandler implements ClientHandler {
                 //Return answer to client
                 outClient.println(path);
                 stack.clear();
+                string_matrix.clear();
+                board.clear();
+                mat.board.clear();
             }
 
             outClient.flush();

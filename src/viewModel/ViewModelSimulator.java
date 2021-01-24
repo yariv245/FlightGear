@@ -6,6 +6,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import model.Model;
@@ -18,7 +19,6 @@ import java.util.*;
 public class ViewModelSimulator extends Observable implements Observer {
 
     Model model;
-    //functions and data
 
     public StringProperty server_ip;
     public StringProperty server_port;
@@ -29,7 +29,7 @@ public class ViewModelSimulator extends Observable implements Observer {
     public DoubleProperty rudderVal = new SimpleDoubleProperty();
     public DoubleProperty throttleVal = new SimpleDoubleProperty();
 
-    public DoubleProperty airplaneX = new SimpleDoubleProperty();//Todo: bind this prop to realtime airplane pos
+    public DoubleProperty airplaneX = new SimpleDoubleProperty();
     public DoubleProperty airplaneY = new SimpleDoubleProperty();
 
     public DoubleProperty targetX = new SimpleDoubleProperty();
@@ -39,6 +39,8 @@ public class ViewModelSimulator extends Observable implements Observer {
 
     private boolean firstTime = true;
     private boolean calculating = false;
+    private FileChooser fileChooser;
+
 
     public ViewModelSimulator(Model model) {
         this.model = model;
@@ -46,27 +48,27 @@ public class ViewModelSimulator extends Observable implements Observer {
         server_port = new SimpleStringProperty();
         model.scale.bindBidirectional(this.scale);
         this.model.addObserver(this);
-        //bind airplane variables to model airplane variables
+        fileChooser = new FileChooser();
     }
 
-    //When "Connect" is pressed
     public void client_connect() {
         //connect the GUI to MyInterpreter server
         String ip = server_ip.getValue();
-        if(ip.equals("localhost"))
+        if (ip.equals("localhost"))
             ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
         model.connectToInterpreterServer(ip, port);
-    }
+    }//(((y / (350/235)) /(235/152))
 
-    //When "Calculate Path" is pressed
     public void calc_path(int[][] matrix) throws IOException {
         //connect the GUI to calcPath server
         String ip = server_ip.getValue();
-        if(ip.equals("localhost"))
+        if (ip.equals("localhost"))
             ip = "127.0.0.1";
-        int port = Integer.parseInt(server_port.getValue());
-        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get());
+        int port = 5405;
+        double fixedY = this.airplaneX.getValue() / 1.0688259109311740890688 + 12 ;;
+        double fixedX = this.airplaneY.getValue() / 1.546052631578947368421 -50;
+        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), fixedY, fixedX);
     }
 
     public void joystickMovement() {
@@ -81,11 +83,27 @@ public class ViewModelSimulator extends Observable implements Observer {
         model.throttleChange(this.throttleVal.get());
     }
 
+    public void load_text(TextArea text_area) {
+        String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+        fileChooser.setInitialDirectory(new File(currentPath + "/src/resources"));
+        File file = fileChooser.showOpenDialog(new Stage());
+        String pathFile = null;
+        if (file != null)
+            pathFile = file.getPath();
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File(pathFile)))) {
+            String line;
+            while ((line = reader.readLine()) != null)
+                text_area.appendText(line + "\n");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void load_data(MapDisplayer mapDisplayer) throws IOException {
         List<String[]> csvMapData = null;
-        FileChooser fileChooser = new FileChooser();
         String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
-        fileChooser.setInitialDirectory(new File(currentPath+"/src/resources"));
+        fileChooser.setInitialDirectory(new File(currentPath + "/src/resources"));
         File file = fileChooser.showOpenDialog(new Stage());
         String pathFile = null;
         if (file != null)
@@ -99,11 +117,7 @@ public class ViewModelSimulator extends Observable implements Observer {
 
         int[][] csvAsInt = new int[csvMapData.size() - 2][];
 
-        airplaneX.setValue(Double.parseDouble(csvMapData.get(0)[0]));
-        airplaneY.setValue(Double.parseDouble(csvMapData.get(0)[1]));
-
         scale.setValue(Double.parseDouble(csvMapData.get(1)[0]));
-        System.out.println(csvMapData.size() + "," + csvMapData.get(5).length);
 
         for (int i = 2; i < csvMapData.size(); i++) {
             csvAsInt[i - 2] = new int[csvMapData.get(i).length];
@@ -112,44 +126,40 @@ public class ViewModelSimulator extends Observable implements Observer {
                 csvAsInt[i - 2][j] = Integer.parseInt(csvMapData.get(i)[j]);
         }
 
-//        for (int i = 0; i < csvAsInt.length; i++) TODO:remove this if not necessary
-//            Collections.reverse(Arrays.asList(csvAsInt[i]));
-
         mapDisplayer.setOnMouseClicked(arg0 -> {
-            if(!calculating) {
+            if (!calculating ) {
                 // place in matrix
+                System.out.println("X: "+arg0.getSceneX()+" y: "+arg0.getSceneY());
                 targetX.setValue(arg0.getX() / 1.0688259109311740890688);
                 targetY.setValue(arg0.getY() / 1.546052631578947368421);
                 if (!firstTime) {
                     mapDisplayer.reDraw();
                     try {
-                        this.calc_path(mapDisplayer.mapData);
+                        if(!firstTime)
+                            this.calc_path(mapDisplayer.mapData);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-//            System.out.println("The X on the matrix is : " + arg0.getX() / 1.0688259109311740890688);
-//            System.out.println("The Y on the matrix is : " + arg0.getY() / 1.546052631578947368421);
+
                 mapDisplayer.gc.strokeText("X", arg0.getX(), arg0.getY());
-                calculating= true;
+                calculating = true;
             }
 
         });
         mapDisplayer.setMapData(csvAsInt);
-
     }
 
-    public void sentToInterpreterServer(String[] lines){
+    public void sentToInterpreterServer(String[] lines) {
         this.model.sentToInterpreterServer(lines);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        //Notify just arrived
-//        System.out.println(arg.toString());
         setChanged();
         notifyObservers(arg);
         this.firstTime = false;
-        calculating = false;
+        if (arg.getClass().getName().equals("java.lang.String"))
+            calculating = false;
     }
 }
