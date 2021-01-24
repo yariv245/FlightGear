@@ -93,10 +93,11 @@ public class Model extends Observable {
         try {
             //Check if we already created connection once
             if (this.socketCalcServer == null) {
-                socketCalcServer = new Socket(ip, port);
-                this.outClientCalcServer = new PrintWriter(socketCalcServer.getOutputStream());
-                this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcServer.getInputStream()));
+
             }
+            socketCalcServer = new Socket(ip, port);
+            this.outClientCalcServer = new PrintWriter(socketCalcServer.getOutputStream());
+            this.inClientCalcServer = new BufferedReader(new InputStreamReader(socketCalcServer.getInputStream()));
 
             //Send the matrix
             for (int[] ints : matrix) {
@@ -111,10 +112,12 @@ public class Model extends Observable {
             outClientCalcServer.println("end");
 
             //Send the airplane position
-            outClientCalcServer.println((int) airplaneY + "," + (int) airplaneX);
+//            outClientCalcServer.println((int) airplaneY + "," + (int) airplaneX);
+            outClientCalcServer.println(63 + "," + 52);
 
             //Send the target position
-            outClientCalcServer.println((int) targetY + "," + (int) targetX);
+            outClientCalcServer.println((int) 40.68936170212766 + "," + (int) 130.98484848484847);
+//            System.out.println("@@@@@@@   X  :" +targetX + "@@@@@@@   Y  :"+targetY);
 
             outClientCalcServer.flush();
 
@@ -133,18 +136,14 @@ public class Model extends Observable {
                 //Once the response (path) is returned, notify the ViewModel
                 setChanged();
                 notifyObservers(path);
-                outClientCalcServer.close();
+//                outClientCalcServer.close();
                 try {
+                    this.socketCalcServer.close();
                     inClientCalcServer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                try {
-                    this.inClientCalcServer.close();
-                    this.socketCalcServer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 this.outClientCalcServer.close();
             });
 

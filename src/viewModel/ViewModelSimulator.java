@@ -58,15 +58,17 @@ public class ViewModelSimulator extends Observable implements Observer {
             ip = "127.0.0.1";
         int port = Integer.parseInt(server_port.getValue());
         model.connectToInterpreterServer(ip, port);
-    }
+    }//(((y / (350/235)) /(235/152))
 
     public void calc_path(int[][] matrix) throws IOException {
         //connect the GUI to calcPath server
         String ip = server_ip.getValue();
         if (ip.equals("localhost"))
             ip = "127.0.0.1";
-        int port = Integer.parseInt(server_port.getValue());
-        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), airplaneX.doubleValue() / 1.0688259109311740890688, airplaneY.getValue() / 1.546052631578947368421);
+        int port = 5405;
+        double fixedY = this.airplaneX.getValue() / 1.0688259109311740890688 + 12 ;;
+        double fixedX = this.airplaneY.getValue() / 1.546052631578947368421 -50;
+        model.connectToCalcServer(ip, port, matrix, targetX.get(), targetY.get(), fixedY, fixedX);
     }
 
     public void joystickMovement() {
@@ -125,14 +127,16 @@ public class ViewModelSimulator extends Observable implements Observer {
         }
 
         mapDisplayer.setOnMouseClicked(arg0 -> {
-            if (!calculating) {
+            if (!calculating ) {
                 // place in matrix
+                System.out.println("X: "+arg0.getSceneX()+" y: "+arg0.getSceneY());
                 targetX.setValue(arg0.getX() / 1.0688259109311740890688);
                 targetY.setValue(arg0.getY() / 1.546052631578947368421);
                 if (!firstTime) {
                     mapDisplayer.reDraw();
                     try {
-                        this.calc_path(mapDisplayer.mapData);
+                        if(!firstTime)
+                            this.calc_path(mapDisplayer.mapData);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -155,6 +159,7 @@ public class ViewModelSimulator extends Observable implements Observer {
         setChanged();
         notifyObservers(arg);
         this.firstTime = false;
-        calculating = false;
+        if (arg.getClass().getName().equals("java.lang.String"))
+            calculating = false;
     }
 }

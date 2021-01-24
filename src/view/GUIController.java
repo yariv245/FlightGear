@@ -104,6 +104,8 @@ public class GUIController implements Observer {
         viewModelSimulator.rudderVal.bind(rudder_slider.valueProperty());
         this.viewModelSimulator.addObserver(this);
 
+//        viewModelSimulator.airplaneX.bind(this.airplane.layoutXProperty());
+//        viewModelSimulator.airplaneY.bind(this.airplane.layoutYProperty());
         viewModelSimulator.airplaneX.bind(this.airplane.layoutXProperty());
         viewModelSimulator.airplaneY.bind(this.airplane.layoutYProperty());
     }
@@ -203,7 +205,7 @@ public class GUIController implements Observer {
             airplane.setLayoutX(x);
             airplane.setLayoutY(y);
 
-            airplane.setRotate(Double.parseDouble(data[2]));
+            airplane.setRotate(Double.parseDouble(data[2]) -90);
         }
     }
 
